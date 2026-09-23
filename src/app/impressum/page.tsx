@@ -26,6 +26,10 @@ export default function ImpressumPage() {
                 {brand.address.street}
                 <br />
                 {brand.address.zip} {brand.address.city}
+                <br />
+                UID-Nummer: ATU74637468
+                <br />
+                Gewerbeberechtigung: Handelsgewerbe
               </p>
             </section>
 
@@ -90,12 +94,6 @@ export default function ImpressumPage() {
               </p>
             </section>
           </div>
-
-          <p className="mt-10 rounded-[16px] bg-stein-2/60 p-4 text-sm text-text-muted">
-            Hinweis für die Freigabe: UID-Nummer, Gewerbeberechtigung und
-            Firmenbuchdaten (falls zutreffend) bitte vom Kunden ergänzen lassen,
-            bevor die Seite live geht.
-          </p>
         </div>
       </div>
     </>
