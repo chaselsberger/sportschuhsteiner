@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+:root {
+  /* Sport Schuh Steiner Markenfarben */
+  --color-nachtblau: #13303b;
+  --color-tiefblau: #0e242d;
+  --color-logoblau: #56a1ba;
+  --color-linkblau: #2e6f86;
+  --color-logogelb: #f2e62b;
+  --color-stein: #f4f1ea;
+  --color-stein-2: #e9e4d8;
+  --color-linie: #d9d2c3;
+  --color-text: #1b2a30;
+  --color-text-muted: #4e5e64;
+
+  --background: var(--color-stein);
+  --foreground: var(--color-text);
+
+  --radius-sm: 12px;
+  --radius-lg: 24px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-nachtblau: var(--color-nachtblau);
+  --color-tiefblau: var(--color-tiefblau);
+  --color-logoblau: var(--color-logoblau);
+  --color-linkblau: var(--color-linkblau);
+  --color-logogelb: var(--color-logogelb);
+  --color-stein: var(--color-stein);
+  --color-stein-2: var(--color-stein-2);
+  --color-linie: var(--color-linie);
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading), var(--font-body), system-ui, sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* Sichtbarer Fokus für Tastaturbedienung (Barrierefreiheit, kein Overlay-Widget) */
+:focus-visible {
+  outline: 3px solid var(--color-logogelb);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  background: var(--color-logogelb);
+  color: var(--color-text);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-sm);
+  z-index: 100;
+  font-weight: 700;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.logo-mountain svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.logo-mountain .mountain-path {
+  fill: transparent;
+  stroke: var(--color-logogelb);
+  stroke-width: 0.45;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition:
+    stroke-dashoffset 2.4s ease,
+    fill 0.6s ease 2.2s;
+}
+
+.logo-mountain.play .mountain-path {
+  stroke-dashoffset: 0;
+  fill: var(--color-logogelb);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-mountain .mountain-path {
+    stroke-dashoffset: 0;
+    fill: var(--color-logogelb);
+    transition: none;
+  }
+}
+
+/* Grat-Linie: gezackte Bergkante am Einstiegsbereich, zeichnet sich gelb */
+.ridge-line path.ridge-path {
+  fill: none;
+  stroke: var(--color-logogelb);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 2.8s ease 0.3s;
+}
+
+.ridge-line.play path.ridge-path {
+  stroke-dashoffset: 0;
+}
+
+.ridge-line .ridge-runner {
+  offset-rotate: 0deg;
+  opacity: 0;
+  transition: opacity 0.4s ease 2.6s;
+}
+
+.ridge-line.play .ridge-runner {
+  opacity: 1;
+  animation: ridge-run 14s linear 2.8s infinite;
+}
+
+@keyframes ridge-run {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ridge-line path.ridge-path {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+  .ridge-line .ridge-runner {
+    opacity: 1;
+    animation: none;
+    offset-distance: 30%;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --color-text-muted: var(--color-text);
+    --color-linie: var(--color-text);
+  }
+}
