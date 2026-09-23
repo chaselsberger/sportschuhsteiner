@@ -1,0 +1,8 @@
+AuthType Basic
+AuthName "Sport Schuh Steiner - Vorschau"
+AuthUserFile /var/www/vhosts/sport-schuh-steiner.at/.htpasswd-vorschau
+Require valid-user
+
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
