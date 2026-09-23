@@ -1,20 +1,53 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { brand } from "@/brand.config";
 import { type Product, euro } from "@/lib/demo-products";
 import { BottomSheet } from "../BottomSheet";
 import { Icon } from "../Icon";
 
 /**
- * Kaufen / Reservieren. Solange Checkout (Stripe) und Reservierung (Datenbank)
- * noch nicht live sind, öffnen alle Knöpfe das Reservierungs-Sheet: Das Paar
- * wird per WhatsApp, E-Mail oder Anruf zurückgelegt – persönlich bestätigt.
+ * Kaufen (Stripe Checkout, Menge immer 1 – Einzelstück) / Reservieren
+ * (Paar wird per WhatsApp, E-Mail oder Anruf zurückgelegt).
  */
 export function ProductActions({ product }: { product: Product }) {
-  const [open, setOpen] = useState<null | "kaufen" | "reservieren">(null);
+  const [open, setOpen] = useState<null | "reservieren">(null);
   const [name, setName] = useState("");
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const id = useId();
+  const [checkoutAbgebrochen, setCheckoutAbgebrochen] = useState(false);
+
+  useEffect(() => {
+    // Nur clientseitig lesbar (SSR kennt die Query nicht) – daher erst nach dem Mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCheckoutAbgebrochen(
+      new URLSearchParams(window.location.search).get("checkout") ===
+        "abgebrochen",
+    );
+  }, []);
+
+  async function handleKaufen() {
+    setCheckoutError(null);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: product.slug }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        throw new Error(data.error ?? "Checkout fehlgeschlagen.");
+      }
+      window.location.href = data.url;
+    } catch {
+      setCheckoutError(
+        "Der Checkout konnte nicht gestartet werden. Bitte versuchen Sie es erneut oder reservieren Sie das Paar.",
+      );
+      setLoading(false);
+    }
+  }
 
   const message = [
     `Reservierung – ${brand.name}`,
@@ -33,30 +66,41 @@ export function ProductActions({ product }: { product: Product }) {
     <>
       {/* Desktop */}
       <div className="hidden flex-col gap-2.5 lg:flex">
+        {checkoutAbgebrochen && (
+          <p className="m-0 rounded-xl bg-[#fff6e0] px-4 py-3 text-[13px] text-nachtblau">
+            Zahlung abgebrochen – Sie können es jederzeit erneut versuchen.
+          </p>
+        )}
         <button
           type="button"
-          onClick={() => setOpen("kaufen")}
-          className="flex h-[60px] items-center justify-center gap-3 rounded-full bg-nachtblau text-[17px] font-extrabold text-white hover:bg-tiefblau"
+          onClick={handleKaufen}
+          disabled={loading}
+          className="flex h-[60px] items-center justify-center gap-3 rounded-full bg-nachtblau text-[17px] font-extrabold text-white hover:bg-tiefblau disabled:opacity-60"
         >
-          <Icon name="bag" size={22} />
-          In den Warenkorb
+          <Icon name={loading ? "loading" : "bag"} size={22} />
+          {loading ? "Weiter zur Kasse …" : "Jetzt kaufen"}
         </button>
         <div className="grid grid-cols-2 gap-2.5">
           <button
             type="button"
-            onClick={() => setOpen("kaufen")}
-            className="h-[54px] rounded-full bg-black text-base font-extrabold text-white"
+            onClick={handleKaufen}
+            disabled={loading}
+            className="h-[54px] rounded-full bg-black text-base font-extrabold text-white disabled:opacity-60"
           >
             Apple Pay
           </button>
           <button
             type="button"
-            onClick={() => setOpen("kaufen")}
-            className="h-[54px] rounded-full border border-text bg-white text-base font-extrabold text-text"
+            onClick={handleKaufen}
+            disabled={loading}
+            className="h-[54px] rounded-full border border-text bg-white text-base font-extrabold text-text disabled:opacity-60"
           >
             Google Pay
           </button>
         </div>
+        {checkoutError && (
+          <p className="m-0 text-[13px] text-[#b3261e]">{checkoutError}</p>
+        )}
         <button
           type="button"
           onClick={() => setOpen("reservieren")}
@@ -79,21 +123,31 @@ export function ProductActions({ product }: { product: Product }) {
         className="fixed inset-x-0 bottom-0 z-40 flex flex-col gap-2.5 border-t border-karte-rand bg-white px-4 pt-3.5 lg:hidden"
         style={{ paddingBottom: "calc(14px + env(safe-area-inset-bottom))" }}
       >
+        {checkoutAbgebrochen && (
+          <p className="m-0 rounded-xl bg-[#fff6e0] px-3.5 py-2.5 text-[13px] text-nachtblau">
+            Zahlung abgebrochen – erneut versuchen?
+          </p>
+        )}
+        {checkoutError && (
+          <p className="m-0 text-[13px] text-[#b3261e]">{checkoutError}</p>
+        )}
         <div className="flex gap-2.5">
           <button
             type="button"
-            onClick={() => setOpen("kaufen")}
-            className="h-[54px] flex-1 rounded-full bg-black text-base font-extrabold text-white"
+            onClick={handleKaufen}
+            disabled={loading}
+            className="h-[54px] flex-1 rounded-full bg-black text-base font-extrabold text-white disabled:opacity-60"
           >
             Apple Pay
           </button>
           <button
             type="button"
-            onClick={() => setOpen("kaufen")}
-            className="flex h-[54px] flex-1 items-center justify-center gap-2 rounded-full bg-nachtblau text-base font-extrabold text-white"
+            onClick={handleKaufen}
+            disabled={loading}
+            className="flex h-[54px] flex-1 items-center justify-center gap-2 rounded-full bg-nachtblau text-base font-extrabold text-white disabled:opacity-60"
           >
-            <Icon name="bag" size={20} />
-            Warenkorb
+            <Icon name={loading ? "loading" : "bag"} size={20} />
+            {loading ? "Weiter …" : "Kaufen"}
           </button>
         </div>
         <button
@@ -109,15 +163,12 @@ export function ProductActions({ product }: { product: Product }) {
       <BottomSheet
         open={open !== null}
         onClose={() => setOpen(null)}
-        title={
-          open === "kaufen" ? "Online-Kauf folgt in Kürze" : "Paar reservieren"
-        }
+        title="Paar reservieren"
       >
         <div className="flex flex-col gap-4">
           <p className="m-0 text-[15px] leading-relaxed text-text-muted">
-            {open === "kaufen"
-              ? "Die Kasse mit Karte, EPS, Apple Pay, Google Pay und Klarna wird gerade eingerichtet. Bis dahin legen wir Ihnen das Paar gerne kostenlos zurück."
-              : "Wir legen Ihnen das Paar 48 Stunden kostenlos und unverbindlich zurück – anprobieren mit Beratung inklusive."}
+            Wir legen Ihnen das Paar 48 Stunden kostenlos und unverbindlich
+            zurück – anprobieren mit Beratung inklusive.
           </p>
           <p className="m-0 text-[13px] leading-relaxed text-text-muted">
             Hinweis: Da es sich um ein Restposten-Einzelstück handelt, ist die

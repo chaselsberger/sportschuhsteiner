@@ -5,7 +5,12 @@
 
 const isStaging = process.env.NEXT_PUBLIC_SITE_ENV !== "production";
 
+const siteUrl = isStaging
+  ? "https://vorschau.sport-schuh-steiner.at"
+  : "https://www.sport-schuh-steiner.at";
+
 export const brand = {
+  siteUrl,
   name: "Sport Schuh Steiner",
   owner: "Georg Steiner",
   claim: "Beratung, für die man gerne ein paar Kilometer fährt.",
