@@ -75,7 +75,7 @@ export function HomeHero() {
         </div>
       </div>
 
-      <div className="hidden lg:block">
+      <div className="pointer-events-none absolute inset-0 z-[3] hidden lg:flex lg:flex-col lg:justify-end">
         <HeroRidge />
       </div>
     </section>

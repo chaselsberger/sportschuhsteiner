@@ -35,7 +35,7 @@ export function HeroRidge() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 -bottom-[2px] z-[3]"
+      className="pointer-events-none sticky -bottom-[2px]"
       style={{ height: "max(140px, 9.7222vw)" }}
     >
       <svg
