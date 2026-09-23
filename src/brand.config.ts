@@ -3,6 +3,8 @@
  * Für einen anderen Kunden: diese Datei (+ Farben in globals.css, + Fonts) austauschen.
  */
 
+const isStaging = process.env.NEXT_PUBLIC_SITE_ENV !== "production";
+
 export const brand = {
   name: "Sport Schuh Steiner",
   owner: "Georg Steiner",
@@ -37,14 +39,18 @@ export const brand = {
     so: [],
   },
   google: {
-    // TODO(Kunde): Place ID + API-Key (Places API New) ergänzen — Key nur serverseitig verwenden
     placeId: process.env.GOOGLE_PLACE_ID ?? "",
   },
   stripe: {
-    // TODO(Kunde): Stripe-Konto auf den Kunden anlegen, Keys ergänzen. Bis dahin läuft der Shop im Vorschau-Modus.
-    publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "",
+    // Vorschau (isStaging) nutzt immer die Stripe-Testschlüssel, Produktion die Live-Schlüssel.
+    // Der geheime Schlüssel (STRIPE_SECRET_KEY / _TEST) wird bewusst NICHT hier gelesen,
+    // da brand.config.ts auch von Client-Komponenten importiert wird — siehe lib/stripe.ts.
+    publishableKey:
+      (isStaging
+        ? process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST
+        : process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) ?? "",
   },
-  isStaging: process.env.NEXT_PUBLIC_SITE_ENV !== "production",
+  isStaging,
 } as const;
 
 export const categories = [
