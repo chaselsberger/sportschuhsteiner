@@ -44,7 +44,7 @@ export async function getPlaceDetails(): Promise<PlaceDetails | null> {
 
   try {
     const res = await fetch(
-      `https://places.googleapis.com/v1/places/${placeId}`,
+      `https://places.googleapis.com/v1/places/${placeId}?languageCode=de`,
       {
         headers: {
           "X-Goog-Api-Key": apiKey,
