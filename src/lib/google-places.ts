@@ -44,7 +44,7 @@ export async function getPlaceDetails(): Promise<PlaceDetails | null> {
 
   try {
     const res = await fetch(
-      `https://places.googleapis.com/v1/places/${placeId}?reviewsSort=newest`,
+      `https://places.googleapis.com/v1/places/${placeId}`,
       {
         headers: {
           "X-Goog-Api-Key": apiKey,
@@ -69,7 +69,19 @@ export async function getPlaceDetails(): Promise<PlaceDetails | null> {
       googleMapsUri:
         data.googleMapsUri ??
         "https://www.google.com/maps/search/?api=1&query=Sport+Schuh+Steiner+Scheffau",
+      // Places API (New) hat keinen reviewsSort-Parameter mehr (anders als
+      // die alte API) und liefert die bis zu 5 Reviews in Google-eigener
+      // "Relevanz"-Reihenfolge — hier nach publishTime neu sortiert.
       reviews: (data.reviews ?? [])
+        .slice()
+        .sort(
+          (
+            a: { publishTime?: string },
+            b: { publishTime?: string },
+          ) =>
+            new Date(b.publishTime ?? 0).getTime() -
+            new Date(a.publishTime ?? 0).getTime(),
+        )
         .slice(0, 5)
         .map(
           (r: {
