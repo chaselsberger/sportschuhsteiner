@@ -40,7 +40,7 @@ export async function Header() {
           className="flex shrink-0"
         >
           <Image
-            src="/brand/logo-full.png"
+            src="/brand/logo-full-nachtblau.svg"
             alt={brand.name}
             width={139}
             height={56}
@@ -75,7 +75,7 @@ export async function Header() {
           className="flex"
         >
           <Image
-            src="/brand/logo-full.png"
+            src="/brand/logo-full-nachtblau.svg"
             alt={brand.name}
             width={104}
             height={42}
