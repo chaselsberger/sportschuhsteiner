@@ -175,13 +175,6 @@ export default function BeratungServicePage() {
                   ))}
                 </ul>
               )}
-              <a
-                href="#termin"
-                className="mt-2 flex h-[50px] items-center gap-2.5 self-start rounded-full bg-nachtblau px-[22px] font-extrabold text-white hover:bg-tiefblau"
-              >
-                <Icon name="calendar" size={20} />
-                Termin anfragen
-              </a>
             </div>
             {s.image && (
               <div className="relative h-[240px] lg:h-auto lg:min-h-[340px] lg:w-[44%] lg:shrink-0">
@@ -217,7 +210,7 @@ export default function BeratungServicePage() {
           className="flex h-14 items-center gap-2.5 rounded-full bg-logogelb px-7 font-extrabold text-nachtblau hover:brightness-95"
         >
           <Icon name="calendar" size={20} />
-          Beratungstermin buchen
+          Termin anfragen
         </a>
         <Link
           href="/sortiment"

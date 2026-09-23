@@ -56,7 +56,7 @@ export async function Header() {
             className="flex h-12 items-center gap-2.5 rounded-full bg-nachtblau px-6 text-[15px] font-extrabold text-white hover:bg-tiefblau"
           >
             <Icon name="calendar" size={20} />
-            Termin buchen
+            Termin anfragen
           </a>
         </div>
       </header>

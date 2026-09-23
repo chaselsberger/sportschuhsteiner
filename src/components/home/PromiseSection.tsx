@@ -26,7 +26,7 @@ export function PromiseSection() {
               className="mt-2 flex h-[54px] items-center gap-2.5 self-start rounded-full bg-logogelb px-[26px] text-base font-extrabold text-nachtblau hover:brightness-95"
             >
               <Icon name="calendar" size={20} />
-              Termin online wählen
+              Termin anfragen
             </a>
           </div>
           <div className="relative h-[300px] flex-1 overflow-hidden rounded-3xl bg-black">
