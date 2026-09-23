@@ -11,11 +11,9 @@ import { currentOpenStatus, type OpenStatus } from "@/lib/opening-hours";
 export function OpenStatusLive({
   initial,
   variant,
-  fromGoogle = false,
 }: {
   initial: OpenStatus;
   variant: "bar" | "pill";
-  fromGoogle?: boolean;
 }) {
   const [status, setStatus] = useState(initial);
 
@@ -65,9 +63,6 @@ export function OpenStatusLive({
           </>
         )}
       </span>
-      {fromGoogle && (
-        <span className="text-[#7FA6B3]">· automatisch aus Google</span>
-      )}
     </p>
   );
 }

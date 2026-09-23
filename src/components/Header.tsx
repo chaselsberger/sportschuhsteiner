@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { brand } from "@/brand.config";
-import { getPlaceDetails } from "@/lib/google-places";
 import { currentOpenStatus } from "@/lib/opening-hours";
 import { Icon } from "./Icon";
 import { MainNav } from "./MainNav";
@@ -10,18 +9,13 @@ import { OpenStatusLive } from "./OpenStatusLive";
 const tel = `tel:${brand.contact.phone.replace(/\s+/g, "")}`;
 
 export async function Header() {
-  const details = await getPlaceDetails();
   const status = currentOpenStatus();
 
   return (
     <>
       {/* Desktop: Info-Leiste mit Live-Status, Adresse, Telefon */}
       <div className="page-x hidden h-10 items-center justify-between bg-nachtblau text-[13px] text-hellblau lg:flex">
-        <OpenStatusLive
-          initial={status}
-          variant="bar"
-          fromGoogle={details !== null}
-        />
+        <OpenStatusLive initial={status} variant="bar" />
         <div className="flex items-center gap-7">
           <span>
             {brand.address.street} · {brand.address.zip} {brand.address.city}
