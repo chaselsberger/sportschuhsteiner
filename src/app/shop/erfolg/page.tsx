@@ -4,8 +4,9 @@ import { redirect } from "next/navigation";
 import { brand } from "@/brand.config";
 import { Icon } from "@/components/Icon";
 import { PageHero } from "@/components/PageHero";
+import { euro } from "@/lib/product-types";
+import { markProductSold } from "@/lib/products";
 import { stripe } from "@/lib/stripe";
-import { euro } from "@/lib/demo-products";
 
 export const metadata: Metadata = {
   title: "Bestellung bestätigt",
@@ -27,6 +28,11 @@ export default async function CheckoutErfolgPage({
 
   if (!session || session.payment_status !== "paid") {
     redirect("/shop");
+  }
+
+  const productId = session.metadata?.productId;
+  if (typeof productId === "string" && productId) {
+    await markProductSold(productId);
   }
 
   const item = session.line_items?.data[0];

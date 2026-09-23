@@ -6,22 +6,16 @@ import { brand } from "@/brand.config";
 import { Icon } from "@/components/Icon";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductActions } from "@/components/shop/ProductActions";
-import {
-  badgeFor,
-  demoProducts,
-  discountLabel,
-  euro,
-} from "@/lib/demo-products";
+import { badgeFor, discountLabel, euro } from "@/lib/product-types";
+import { getPublishedProductBySlug, getSimilarProducts } from "@/lib/products";
 
-export function generateStaticParams() {
-  return demoProducts.map((p) => ({ slug: p.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/shop/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const p = demoProducts.find((x) => x.slug === slug);
+  const p = await getPublishedProductBySlug(slug);
   if (!p) return {};
   return {
     title: `${p.brand} ${p.model} · Gr. ${p.size}`,
@@ -75,12 +69,10 @@ export default async function ProductPage({
   params,
 }: PageProps<"/shop/[slug]">) {
   const { slug } = await params;
-  const product = demoProducts.find((p) => p.slug === slug);
+  const product = await getPublishedProductBySlug(slug);
   if (!product) notFound();
 
-  const similar = demoProducts
-    .filter((p) => p.size === product.size && p.slug !== product.slug)
-    .slice(0, 4);
+  const similar = await getSimilarProducts(product);
 
   return (
     <div className="pb-40 lg:pb-0">

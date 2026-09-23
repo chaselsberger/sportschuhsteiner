@@ -1,47 +1,22 @@
 /**
- * BEISPIELDATEN aus dem Entwurf – Produkte, Preise und Größen sind erfunden.
- * Werden ersetzt, sobald der Shop (Payload CMS + Stripe) angebunden ist.
- * Jedes Produkt = genau 1 Paar in 1 Größe.
+ * Einmalig ausführen (`npm run seed`), um die ehemaligen Beispieldaten aus
+ * demo-products.ts in die Datenbank zu übernehmen und den ersten
+ * Admin-Zugang anzulegen. Danach über /admin verwalten.
  */
+import bcrypt from "bcryptjs";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaClient } from "@prisma/client";
 
-export type ShopCategory =
-  "laufen" | "wandern" | "ski" | "schneeschuh" | "beruf" | "barfuss";
+process.loadEnvFile(".env");
 
-export type Product = {
-  slug: string;
-  brand: string;
-  model: string;
-  /** Kurzname für Karten */
-  title: string;
-  category: ShopCategory;
-  categoryLabel: string;
-  gender: "Damen" | "Herren" | "Kinder";
-  size: number;
-  sizeDetails: string;
-  price: number;
-  oldPrice: number;
-  badge?: string;
-  image: string;
-  /** Freigestellte Produktfotos (schwarzer Grund) ganz zeigen statt beschneiden */
-  fit?: "contain";
-  position?: string;
-  isNew?: boolean;
-};
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) throw new Error("DATABASE_URL fehlt in .env");
 
-export const shopCategories: {
-  key: ShopCategory;
-  label: string;
-  icon: "run" | "hike" | "ski" | "snowshoe" | "work" | "barefoot";
-}[] = [
-  { key: "laufen", label: "Laufen", icon: "run" },
-  { key: "wandern", label: "Wandern & Berg", icon: "hike" },
-  { key: "ski", label: "Ski & Skitour", icon: "ski" },
-  { key: "schneeschuh", label: "Schneeschuh", icon: "snowshoe" },
-  { key: "beruf", label: "Beruf & Alltag", icon: "work" },
-  { key: "barfuss", label: "Barfuß & Freizeit", icon: "barefoot" },
-];
+const prisma = new PrismaClient({
+  adapter: new PrismaBetterSqlite3({ url: databaseUrl }),
+});
 
-export const demoProducts: Product[] = [
+const legacyProducts = [
   {
     slug: "salomon-x-mission-3",
     brand: "Salomon",
@@ -54,8 +29,8 @@ export const demoProducts: Product[] = [
     sizeDetails: "UK 9,5 · US 10 · 28 cm",
     price: 89,
     oldPrice: 130,
-    image: "/images/produkt-salomon-xmission3.jpg",
-    fit: "contain",
+    legacyImage: "/images/produkt-salomon-xmission3.jpg",
+    imageFit: "contain",
     isNew: true,
   },
   {
@@ -71,7 +46,7 @@ export const demoProducts: Product[] = [
     price: 139,
     oldPrice: 179,
     badge: "Einzelstück",
-    image: "/images/kategorie-laufen.jpg",
+    legacyImage: "/images/kategorie-laufen.jpg",
   },
   {
     slug: "leguano-jaspar",
@@ -86,7 +61,8 @@ export const demoProducts: Product[] = [
     price: 119,
     oldPrice: 149,
     badge: "Restposten",
-    image: "/images/kategorie-barfuss.jpg",
+    legacyImage: "/images/kategorie-barfuss.jpg",
+    isRestposten: true,
   },
   {
     slug: "diadora-sicherheitsschuh-s3",
@@ -101,8 +77,8 @@ export const demoProducts: Product[] = [
     price: 99,
     oldPrice: 139,
     badge: "Einzelstück",
-    image: "/images/produkt-diadora-s3.jpg",
-    position: "50% 65%",
+    legacyImage: "/images/produkt-diadora-s3.jpg",
+    imagePosition: "50% 65%",
   },
   {
     slug: "on-laufschuh-herren",
@@ -117,7 +93,7 @@ export const demoProducts: Product[] = [
     price: 139,
     oldPrice: 179,
     badge: "Einzelstück",
-    image: "/images/kategorie-laufen.jpg",
+    legacyImage: "/images/kategorie-laufen.jpg",
   },
   {
     slug: "zustiegsschuh-herren",
@@ -131,8 +107,8 @@ export const demoProducts: Product[] = [
     sizeDetails: "UK 9,5 · US 10 · 28 cm",
     price: 134,
     oldPrice: 179,
-    image: "/images/kategorie-wandern.jpg",
-    position: "50% 60%",
+    legacyImage: "/images/kategorie-wandern.jpg",
+    imagePosition: "50% 60%",
   },
   {
     slug: "arbeitsschuh-s3-gore-tex",
@@ -147,8 +123,8 @@ export const demoProducts: Product[] = [
     price: 149,
     oldPrice: 199,
     badge: "Einzelstück",
-    image: "/images/kategorie-beruf.jpg",
-    position: "50% 55%",
+    legacyImage: "/images/kategorie-beruf.jpg",
+    imagePosition: "50% 55%",
   },
   {
     slug: "leguano-jaspar-44",
@@ -163,7 +139,8 @@ export const demoProducts: Product[] = [
     price: 119,
     oldPrice: 149,
     badge: "Restposten",
-    image: "/images/kategorie-barfuss.jpg",
+    legacyImage: "/images/kategorie-barfuss.jpg",
+    isRestposten: true,
   },
   {
     slug: "nordica-skischuh-herren",
@@ -178,8 +155,8 @@ export const demoProducts: Product[] = [
     price: 299,
     oldPrice: 449,
     badge: "Bootfitting inkl.",
-    image: "/images/kategorie-ski.jpg",
-    position: "50% 30%",
+    legacyImage: "/images/kategorie-ski.jpg",
+    imagePosition: "50% 30%",
   },
   {
     slug: "dolomite-trekkingschuh",
@@ -193,29 +170,45 @@ export const demoProducts: Product[] = [
     sizeDetails: "UK 9,5 · US 10 · 28 cm",
     price: 112,
     oldPrice: 160,
-    image: "/images/produkt-dolomite-trekking.jpg",
+    legacyImage: "/images/produkt-dolomite-trekking.jpg",
   },
-];
+] as const;
 
-/** Startseite: die 4 neuesten Paare (Reihenfolge laut Entwurf) */
-export const latestProducts = [
-  "on-laufschuh-damen",
-  "salomon-x-mission-3",
-  "leguano-jaspar",
-  "diadora-sicherheitsschuh-s3",
-].map((slug) => demoProducts.find((p) => p.slug === slug)!);
+async function main() {
+  for (const p of legacyProducts) {
+    await prisma.product.upsert({
+      where: { slug: p.slug },
+      create: { ...p, status: "veroeffentlicht" },
+      update: {},
+    });
+  }
+  console.log(`${legacyProducts.length} Produkte angelegt/vorhanden.`);
 
-export function discountLabel(p: Product) {
-  return `−${Math.round((1 - p.price / p.oldPrice) * 100)} %`;
+  const adminEmail = process.env.ADMIN_SEED_EMAIL;
+  const adminPassword = process.env.ADMIN_SEED_PASSWORD;
+  if (!adminEmail || !adminPassword) {
+    console.log(
+      "ADMIN_SEED_EMAIL/ADMIN_SEED_PASSWORD fehlen in .env — kein Admin-Zugang angelegt.",
+    );
+    return;
+  }
+  const existing = await prisma.adminUser.findUnique({
+    where: { email: adminEmail },
+  });
+  if (existing) {
+    console.log(`Admin-Zugang für ${adminEmail} existiert bereits.`);
+    return;
+  }
+  const passwordHash = await bcrypt.hash(adminPassword, 12);
+  await prisma.adminUser.create({
+    data: { email: adminEmail, passwordHash, name: "Inhaber" },
+  });
+  console.log(`Admin-Zugang für ${adminEmail} angelegt.`);
 }
 
-/** Plakette oben links: gesetzte Plakette, sonst „Neu“ oder der Rabatt */
-export function badgeFor(p: Product) {
-  if (p.isNew) return "Neu";
-  return p.badge ?? discountLabel(p);
-}
-
-export const euro = (value: number) =>
-  `€ ${value.toLocaleString("de-AT", { minimumFractionDigits: 0 })},–`;
-
-export const shopSizes = [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47];
+main()
+  .catch((err) => {
+    console.error(err);
+    process.exitCode = 1;
+  })
+  .finally(() => prisma.$disconnect());

@@ -6,7 +6,8 @@ import { brand, categories } from "@/brand.config";
 import { Icon } from "@/components/Icon";
 import { PageHero } from "@/components/PageHero";
 import { ProductCard } from "@/components/ProductCard";
-import { badgeFor, demoProducts } from "@/lib/demo-products";
+import { badgeFor } from "@/lib/product-types";
+import { getPublishedProductsByCategory } from "@/lib/products";
 
 const descriptions: Record<(typeof categories)[number]["slug"], string> = {
   laufschuhe:
@@ -27,9 +28,7 @@ const descriptions: Record<(typeof categories)[number]["slug"], string> = {
     "Spüren, worauf man sich bewegt: gesunde Füße und guter Grip mit hochwertigen Barfußschuhen für Erwachsene und Kinder.",
 };
 
-export function generateStaticParams() {
-  return categories.map((c) => ({ kategorie: c.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -50,9 +49,7 @@ export default async function KategoriePage({
   const cat = categories.find((c) => c.slug === kategorie);
   if (!cat) notFound();
 
-  const products = demoProducts
-    .filter((p) => p.category === cat.shop)
-    .slice(0, 4);
+  const products = await getPublishedProductsByCategory(cat.shop, 4);
 
   return (
     <>

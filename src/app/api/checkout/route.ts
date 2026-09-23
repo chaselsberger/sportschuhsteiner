@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { brand } from "@/brand.config";
-import { demoProducts } from "@/lib/demo-products";
+import { getSellableProductBySlug } from "@/lib/products";
 import { stripe } from "@/lib/stripe";
 
 /** Kurze, für Kunden lesbare Bestellnummer (z. B. "SO-20260923-A7K2") statt der langen Stripe-Session-ID. */
@@ -16,8 +16,8 @@ function generateOrderNumber(): string {
 
 /**
  * Erstellt eine Stripe-Checkout-Session für genau 1 Paar (Einzelstück, Menge
- * immer 1). Der Preis kommt serverseitig aus demoProducts — nie vom Client
- * übernehmen, sonst könnte der Preis manipuliert werden.
+ * immer 1). Preis und Verfügbarkeit kommen serverseitig aus der Datenbank —
+ * nie vom Client übernehmen, sonst könnte der Preis manipuliert werden.
  */
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -27,10 +27,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Ungültige Anfrage." }, { status: 400 });
   }
 
-  const product = demoProducts.find((p) => p.slug === slug);
+  const product = await getSellableProductBySlug(slug);
   if (!product) {
     return NextResponse.json(
-      { error: "Produkt nicht gefunden." },
+      { error: "Produkt nicht verfügbar." },
       { status: 404 },
     );
   }
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
           product_data: {
             name: `${product.brand} ${product.model} · Gr. ${product.size}`,
             description: `${product.gender} · ${product.sizeDetails}`,
-            images: [`${brand.siteUrl}${product.image}`],
+            images: [`${brand.siteUrl}${product.imagePath}`],
           },
         },
       },
@@ -59,6 +59,7 @@ export async function POST(request: Request) {
       allowed_countries: ["AT", "DE"],
     },
     metadata: {
+      productId: product.id,
       slug: product.slug,
       orderNumber,
     },

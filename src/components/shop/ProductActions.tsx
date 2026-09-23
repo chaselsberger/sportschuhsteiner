@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import { brand } from "@/brand.config";
-import { type Product, euro } from "@/lib/demo-products";
+import { type Product, euro } from "@/lib/product-types";
 import { BottomSheet } from "../BottomSheet";
 import { Icon } from "../Icon";
 

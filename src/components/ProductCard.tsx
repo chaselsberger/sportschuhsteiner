@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { type Product, euro } from "@/lib/demo-products";
+import { type Product, euro } from "@/lib/product-types";
 import { Icon } from "./Icon";
 
 function ProductImage({ product, sizes }: { product: Product; sizes: string }) {

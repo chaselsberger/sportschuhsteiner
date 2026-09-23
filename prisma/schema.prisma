@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum ProductStatus {
+  entwurf
+  veroeffentlicht
+  verkauft
+}
+
+enum ShopCategory {
+  laufen
+  wandern
+  ski
+  schneeschuh
+  beruf
+  barfuss
+}
+
+enum Gender {
+  Damen
+  Herren
+  Kinder
+}
+
+model Product {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  brand         String
+  model         String
+  title         String
+  category      ShopCategory
+  categoryLabel String
+  gender        Gender
+  size          Float
+  sizeDetails   String
+  price         Int
+  oldPrice      Int?
+  badge         String?
+  isRestposten  Boolean       @default(false)
+  isNew         Boolean       @default(false)
+  status        ProductStatus @default(entwurf)
+  /// Statisches Bild aus public/images (Altbestand vor der Admin-PWA). Neue
+  /// Produkte nutzen stattdessen `photos`.
+  legacyImage   String?
+  /// CSS object-fit/position für Bilder mit freigestelltem/schwarzem Grund
+  /// (siehe ProductActions/ShopBrowser).
+  imageFit      String?
+  imagePosition String?
+  photos        ProductPhoto[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model ProductPhoto {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  dateiname String
+  sortIndex Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+}

@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { bodyFont, headingFont } from "@/lib/fonts";
 import { brand, serviceAreas } from "@/brand.config";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { MobileTabBar } from "@/components/MobileTabBar";
-import { CookieBanner } from "@/components/CookieBanner";
+import { SiteChrome } from "@/components/SiteChrome";
 import { CookieConsentProvider } from "@/lib/cookie-consent";
 import { AppointmentProvider } from "@/lib/appointment";
 
@@ -88,13 +85,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         <CookieConsentProvider>
           <AppointmentProvider>
-            <Header />
-            <main id="main" className="flex-1">
-              {children}
-            </main>
-            <Footer />
-            <MobileTabBar />
-            <CookieBanner />
+            <SiteChrome>{children}</SiteChrome>
           </AppointmentProvider>
         </CookieConsentProvider>
       </body>

@@ -8,7 +8,7 @@ import {
   badgeFor,
   shopCategories,
   shopSizes,
-} from "@/lib/demo-products";
+} from "@/lib/product-types";
 import { BottomSheet } from "../BottomSheet";
 import { Icon } from "../Icon";
 import { ProductCard } from "../ProductCard";

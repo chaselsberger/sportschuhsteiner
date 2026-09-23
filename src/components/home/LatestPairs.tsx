@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { brand } from "@/brand.config";
-import { discountLabel, latestProducts } from "@/lib/demo-products";
+import { badgeFor } from "@/lib/product-types";
+import { getLatestProducts } from "@/lib/products";
 import { Icon } from "../Icon";
 import { ProductCard, ProductCardMobile } from "../ProductCard";
 
 /** Shop-Vorschau: die 4 neuesten Einzelstücke */
-export function LatestPairs() {
-  const products = latestProducts;
-  const badge = (p: (typeof products)[number]) => p.badge ?? discountLabel(p);
+export async function LatestPairs() {
+  const products = await getLatestProducts();
+  if (products.length === 0) return null;
+  const badge = badgeFor;
 
   return (
     <>
@@ -80,9 +82,11 @@ export function LatestPairs() {
           </Link>
         </div>
         <div className="scroll-row flex gap-3 overflow-x-auto pr-4 sm:pr-8">
-          {[products[1], products[0], products[2], products[3]].map((p) => (
-            <ProductCardMobile key={p.slug} product={p} badge={badge(p)} />
-          ))}
+          {[products[1], products[0], products[2], products[3]]
+            .filter((p): p is (typeof products)[number] => Boolean(p))
+            .map((p) => (
+              <ProductCardMobile key={p.slug} product={p} badge={badge(p)} />
+            ))}
         </div>
         {brand.isStaging && (
           <p className="m-0 pr-4 text-xs text-grau">Vorschau: Beispieldaten.</p>
