@@ -32,6 +32,10 @@ export default async function CheckoutErfolgPage({
   const item = session.line_items?.data[0];
   const amount =
     typeof session.amount_total === "number" ? session.amount_total / 100 : null;
+  const orderNumber =
+    typeof session.metadata?.orderNumber === "string"
+      ? session.metadata.orderNumber
+      : session.id;
 
   return (
     <div className="pb-16">
@@ -71,7 +75,8 @@ export default async function CheckoutErfolgPage({
           )}
 
           <p className="m-0 text-sm text-text-muted">
-            Bestellnummer: <span className="font-mono">{session.id}</span>
+            Bestellnummer:{" "}
+            <span className="break-all font-mono">{orderNumber}</span>
           </p>
 
           {brand.isStaging && (

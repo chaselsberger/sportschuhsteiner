@@ -3,6 +3,17 @@ import { brand } from "@/brand.config";
 import { demoProducts } from "@/lib/demo-products";
 import { stripe } from "@/lib/stripe";
 
+/** Kurze, für Kunden lesbare Bestellnummer (z. B. "SO-20260923-A7K2") statt der langen Stripe-Session-ID. */
+function generateOrderNumber(): string {
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let suffix = "";
+  for (let i = 0; i < 4; i++) {
+    suffix += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return `SO-${date}-${suffix}`;
+}
+
 /**
  * Erstellt eine Stripe-Checkout-Session für genau 1 Paar (Einzelstück, Menge
  * immer 1). Der Preis kommt serverseitig aus demoProducts — nie vom Client
@@ -23,6 +34,8 @@ export async function POST(request: Request) {
       { status: 404 },
     );
   }
+
+  const orderNumber = generateOrderNumber();
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
@@ -47,6 +60,7 @@ export async function POST(request: Request) {
     },
     metadata: {
       slug: product.slug,
+      orderNumber,
     },
     success_url: `${brand.siteUrl}/shop/erfolg?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${brand.siteUrl}/shop/${product.slug}?checkout=abgebrochen`,
