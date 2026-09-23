@@ -254,15 +254,15 @@ export function ShopBrowser({ products }: { products: Product[] }) {
           Nichts dabei{size ? ` in ${size}` : ""}?
         </p>
         <p className="m-0 text-[15px] leading-relaxed text-hellblau">
-          Aktivieren Sie den Größen-Alarm. Neue Einzelstücke in Ihrer Größe
-          kommen per E-Mail – bevor sie weg sind.
+          Schreiben Sie uns, wonach Sie suchen. Wir melden uns mit einem
+          passenden Vorschlag.
         </p>
       </div>
       <a
-        href={`mailto:${brand.contact.email}?subject=${encodeURIComponent(`Größen-Alarm${size ? ` Gr. ${size}` : ""}`)}`}
+        href={`mailto:${brand.contact.email}?subject=${encodeURIComponent(`Anfrage${size ? ` Gr. ${size}` : ""}`)}`}
         className="flex h-[52px] items-center justify-center gap-2.5 rounded-full bg-logogelb px-5 font-extrabold text-nachtblau hover:brightness-95"
       >
-        Größen-Alarm{size ? ` für Gr. ${size}` : " aktivieren"}
+        Anfrage senden
       </a>
     </div>
   );

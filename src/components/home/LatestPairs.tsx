@@ -57,9 +57,10 @@ export function LatestPairs() {
             </span>
           </p>
           <p className="m-0 flex items-center gap-4 text-base text-nachtblau">
-            <Icon name="bell" size={26} />
+            <Icon name="mail" size={26} />
             <span>
-              <b>Größen-Alarm:</b> Wir melden uns, wenn Ihre Größe reinkommt.
+              <b>Fragen zum Schuh?</b> Schreiben Sie uns – wir beraten Sie
+              gerne.
             </span>
           </p>
         </div>

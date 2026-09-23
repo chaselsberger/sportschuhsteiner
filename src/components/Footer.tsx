@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { brand } from "@/brand.config";
 import { Icon } from "./Icon";
-import { SizeAlertForm } from "./SizeAlertForm";
 
 const columns = [
   {
@@ -92,10 +91,9 @@ export function Footer() {
               className="block h-20 w-[198px]"
             />
             <p className="m-0 text-[15px] leading-relaxed">
-              Größen-Alarm für Einzelstücke: Wir schreiben Ihnen, sobald ein
-              Paar in Ihrer Größe im Shop ist.
+              Fragen zu Größe oder Verfügbarkeit? Schreiben Sie uns – wir
+              antworten schnell.
             </p>
-            <SizeAlertForm />
           </div>
           <div className="grid flex-1 grid-cols-4 gap-8 text-[15px]">
             {columns.map((col) => (
