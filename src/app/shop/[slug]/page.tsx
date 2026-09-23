@@ -42,8 +42,8 @@ const perks = [
   },
   {
     icon: "return",
-    title: "14 Tage Rückgabe",
-    text: "Einfach retournieren oder vorbeibringen",
+    title: "Rückgabe",
+    text: "Details dazu vor dem Kauf",
   },
   {
     icon: "lock",
@@ -67,7 +67,7 @@ const accordion = [
   },
   {
     title: "Versand & Rückgabe",
-    text: "Abholung in Scheffau kostenlos, Versand mit der Post nach Österreich und Deutschland. 14 Tage Rückgabe – einfach retournieren oder im Geschäft vorbeibringen.",
+    text: "Abholung in Scheffau kostenlos, Versand mit der Post nach Österreich und Deutschland. Da es sich um ein Restposten-Einzelstück handelt, ist die Rückgabe ausgeschlossen – bitte vor dem Kauf gut prüfen oder im Geschäft anprobieren.",
   },
 ];
 

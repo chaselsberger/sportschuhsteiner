@@ -119,6 +119,10 @@ export function ProductActions({ product }: { product: Product }) {
               ? "Die Kasse mit Karte, EPS, Apple Pay, Google Pay und Klarna wird gerade eingerichtet. Bis dahin legen wir Ihnen das Paar gerne kostenlos zurück."
               : "Wir legen Ihnen das Paar 48 Stunden kostenlos und unverbindlich zurück – anprobieren mit Beratung inklusive."}
           </p>
+          <p className="m-0 text-[13px] leading-relaxed text-text-muted">
+            Hinweis: Da es sich um ein Restposten-Einzelstück handelt, ist die
+            Rückgabe ausgeschlossen.
+          </p>
           <div className="flex items-center gap-3 rounded-2xl border border-karte-rand bg-white p-3.5">
             <span className="flex h-11 items-center rounded-[10px] bg-nachtblau px-3.5 font-extrabold text-white">
               EU {product.size}

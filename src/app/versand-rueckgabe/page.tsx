@@ -44,7 +44,8 @@ export default function VersandRueckgabePage() {
               </h2>
               <p className="mt-2">
                 Da jedes Paar ein Einzelstück ist, bitten wir um sorgfältige
-                Prüfung vor dem Kauf bzw. um Anprobe im Geschäft. Ihr
+                Prüfung vor dem Kauf bzw. um Anprobe im Geschäft. Bei
+                Restposten aus dem Shop ist die Rückgabe ausgeschlossen. Ihr
                 gesetzliches Widerrufsrecht bei Online-Käufen bleibt davon
                 unberührt — siehe Widerrufsbelehrung.
               </p>
