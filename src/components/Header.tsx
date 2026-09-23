@@ -1,74 +1,90 @@
+import Image from "next/image";
 import Link from "next/link";
 import { brand } from "@/brand.config";
+import { getPlaceDetails } from "@/lib/google-places";
+import { currentOpenStatus } from "@/lib/opening-hours";
 import { Icon } from "./Icon";
-import { OpenStatusBadge } from "./OpenStatusBadge";
+import { MainNav } from "./MainNav";
+import { OpenStatusLive } from "./OpenStatusLive";
 
-const navLinks = [
-  { href: "/beratung-service", label: "Beratung & Service" },
-  { href: "/sortiment", label: "Sortiment" },
-  { href: "/shop", label: "Shop" },
-  { href: "/gutscheine", label: "Gutscheine" },
-  { href: "/ueber-uns", label: "Über uns" },
-  { href: "/kontakt", label: "Kontakt" },
-];
+const tel = `tel:${brand.contact.phone.replace(/\s+/g, "")}`;
 
 export async function Header() {
+  const details = await getPlaceDetails();
+  const status = currentOpenStatus();
+
   return (
-    <header className="sticky top-0 z-40 border-b border-linie/60 bg-stein/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-end px-4 pt-1.5 text-text-muted sm:px-6">
-        <OpenStatusBadge />
-      </div>
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 pb-3 pt-1 sm:px-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-lg font-bold text-nachtblau"
-        >
-          <span className="sr-only">{brand.name} — Start</span>
-          <span aria-hidden className="block h-9 w-auto">
-            <svg viewBox="0 0 24 24" className="h-9 w-9 text-nachtblau">
-              <path
-                d="M3 20l6-13 3 6 2-3 7 10z"
-                fill="var(--color-logogelb)"
-              />
-            </svg>
+    <>
+      {/* Desktop: Info-Leiste mit Live-Status, Adresse, Telefon */}
+      <div className="page-x hidden h-10 items-center justify-between bg-nachtblau text-[13px] text-hellblau lg:flex">
+        <OpenStatusLive
+          initial={status}
+          variant="bar"
+          fromGoogle={details !== null}
+        />
+        <div className="flex items-center gap-7">
+          <span>
+            {brand.address.street} · {brand.address.zip} {brand.address.city}
           </span>
-          <span className="hidden font-[var(--font-heading)] text-xl uppercase tracking-wide sm:inline">
-            {brand.name}
-          </span>
-        </Link>
-
-        <nav
-          aria-label="Hauptnavigation"
-          className="hidden items-center gap-6 text-sm font-medium text-text md:flex"
-        >
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-sm py-1 hover:text-linkblau"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-3">
-          <a
-            href={`tel:${brand.contact.phone.replace(/\s+/g, "")}`}
-            className="hidden rounded-full border border-nachtblau/20 px-4 py-2 text-sm font-semibold text-nachtblau hover:bg-stein-2 sm:inline-flex sm:items-center sm:gap-2"
-          >
-            <Icon name="whatsapp" className="h-4 w-4" />
+          <a href={tel} className="font-bold text-white hover:text-logogelb">
             {brand.contact.phoneDisplay}
           </a>
-          <Link
-            href="/kontakt#termin"
-            className="inline-flex items-center gap-2 rounded-full bg-logogelb px-4 py-2 text-sm font-bold text-nachtblau hover:brightness-95"
-          >
-            <Icon name="calendar" className="h-4 w-4" />
-            Termin anfragen
-          </Link>
         </div>
       </div>
-    </header>
+
+      {/* Desktop-Kopf */}
+      <header className="page-x hidden h-24 items-center justify-between border-b border-karte-rand bg-stein lg:flex">
+        <Link
+          href="/"
+          aria-label={`${brand.name} – Startseite`}
+          className="flex shrink-0"
+        >
+          <Image
+            src="/brand/logo-full.png"
+            alt={brand.name}
+            width={139}
+            height={56}
+            loading="eager"
+            className="block h-14 w-[139px]"
+          />
+        </Link>
+        <MainNav />
+        <div className="flex items-center gap-3.5">
+          <Link
+            href="/shop"
+            aria-label="Warenkorb"
+            className="hidden h-12 w-12 items-center justify-center rounded-full border border-linie text-nachtblau hover:bg-white xl:flex"
+          >
+            <Icon name="bag" size={22} />
+          </Link>
+          <a
+            href="#termin"
+            className="flex h-12 items-center gap-2.5 rounded-full bg-nachtblau px-6 text-[15px] font-extrabold text-white hover:bg-tiefblau"
+          >
+            <Icon name="calendar" size={20} />
+            Termin buchen
+          </a>
+        </div>
+      </header>
+
+      {/* Mobil-Kopf: Logo + Öffnungsstatus */}
+      <header className="flex h-[68px] items-center justify-between bg-stein px-4 sm:px-8 lg:hidden">
+        <Link
+          href="/"
+          aria-label={`${brand.name} – Startseite`}
+          className="flex"
+        >
+          <Image
+            src="/brand/logo-full.png"
+            alt={brand.name}
+            width={104}
+            height={42}
+            loading="eager"
+            className="block h-[42px] w-[104px]"
+          />
+        </Link>
+        <OpenStatusLive initial={status} variant="pill" />
+      </header>
+    </>
   );
 }

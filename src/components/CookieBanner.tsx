@@ -24,7 +24,7 @@ const categoryInfo: {
     key: "external",
     title: "Externe Medien",
     description:
-      "Lädt eingebettete Inhalte wie die Google-Karte erst nach deiner Zustimmung.",
+      "Lädt eingebettete Inhalte wie die Google-Karte erst nach Ihrer Zustimmung.",
   },
   {
     key: "statistics",
@@ -83,11 +83,9 @@ export function CookieBanner() {
         role="dialog"
         aria-modal="true"
         aria-label="Cookie-Einstellungen"
-        className="w-full max-w-2xl rounded-[24px] border border-linie bg-stein p-5 shadow-2xl sm:p-6"
+        className="w-full max-w-2xl rounded-3xl border border-karte-rand bg-stein p-5 shadow-[0_24px_60px_rgba(14,36,45,0.3)] sm:p-7"
       >
-        <h2 className="font-[var(--font-heading)] text-lg uppercase text-nachtblau">
-          Cookie-Einstellungen
-        </h2>
+        <h2 className="t-h4 text-nachtblau">Cookie-Einstellungen</h2>
         <p className="mt-2 text-sm text-text-muted">
           Wir verwenden nur, was nötig ist. Zustimmung brauchen wir lediglich
           für externe Inhalte wie die Google-Karte.
@@ -99,7 +97,7 @@ export function CookieBanner() {
             {categoryInfo.map((cat) => (
               <label
                 key={cat.key}
-                className="flex items-start gap-3 rounded-[12px] border border-linie/70 p-3"
+                className="flex items-start gap-3 rounded-xl border border-karte-rand bg-white p-3.5"
               >
                 <input
                   type="checkbox"
@@ -111,7 +109,9 @@ export function CookieBanner() {
                   }
                 />
                 <span>
-                  <span className="block font-semibold">{cat.title}</span>
+                  <span className="block font-extrabold text-nachtblau">
+                    {cat.title}
+                  </span>
                   <span className="block text-sm text-text-muted">
                     {cat.description}
                   </span>
@@ -124,27 +124,27 @@ export function CookieBanner() {
         <div className="mt-5 flex flex-col gap-3 sm:flex-row">
           <button
             onClick={rejectAll}
-            className="min-h-[44px] flex-1 rounded-full border-2 border-nachtblau px-4 font-semibold text-nachtblau"
+            className="h-12 flex-1 rounded-full border-2 border-nachtblau bg-white px-4 font-extrabold text-nachtblau hover:bg-stein-2"
           >
             Alle ablehnen
           </button>
           <button
             onClick={acceptAll}
-            className="min-h-[44px] flex-1 rounded-full bg-logogelb px-4 font-bold text-nachtblau"
+            className="h-12 flex-1 rounded-full border-2 border-nachtblau bg-white px-4 font-extrabold text-nachtblau hover:bg-stein-2"
           >
             Alle akzeptieren
           </button>
           {customizing ? (
             <button
               onClick={() => save(draft)}
-              className="min-h-[44px] flex-1 rounded-full bg-nachtblau px-4 font-semibold text-stein"
+              className="h-12 flex-1 rounded-full bg-nachtblau px-4 font-extrabold text-white"
             >
               Auswahl speichern
             </button>
           ) : (
             <button
               onClick={() => setCustomizing(true)}
-              className="min-h-[44px] flex-1 rounded-full px-4 font-semibold text-linkblau underline"
+              className="h-12 flex-1 rounded-full px-4 font-extrabold text-linkblau underline"
             >
               Auswahl anpassen
             </button>

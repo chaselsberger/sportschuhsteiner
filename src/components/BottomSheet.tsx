@@ -70,7 +70,7 @@ export function BottomSheet({
       <button
         aria-label="Schließen"
         onClick={onClose}
-        className="absolute inset-0 bg-nachtblau/50"
+        className="absolute inset-0 bg-tiefblau/60"
       />
       <div
         ref={dialogRef}
@@ -82,15 +82,13 @@ export function BottomSheet({
         style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom))" }}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-[var(--font-heading)] text-xl uppercase text-nachtblau">
-            {title}
-          </h2>
+          <h2 className="t-h3 text-nachtblau">{title}</h2>
           <button
             onClick={onClose}
             aria-label="Schließen"
-            className="rounded-full p-2 hover:bg-stein-2"
+            className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-stein-2"
           >
-            <Icon name="close" className="h-5 w-5" />
+            <Icon name="close" size={20} />
           </button>
         </div>
         {children}

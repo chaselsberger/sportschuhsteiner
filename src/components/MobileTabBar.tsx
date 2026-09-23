@@ -3,72 +3,68 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Icon } from "./Icon";
-import { AppointmentSheet } from "./AppointmentSheet";
+import { useAppointment } from "@/lib/appointment";
+import { Icon, type IconName } from "./Icon";
 import { MobileMenuSheet } from "./MobileMenuSheet";
 
-const tabs = [
-  { href: "/", label: "Start", icon: "home" as const },
-  { href: "/sortiment", label: "Sortiment", icon: "shop" as const },
-  { href: "/shop", label: "Shop", icon: "cart" as const },
+const tabs: { href: string; label: string; icon: IconName }[] = [
+  { href: "/", label: "Start", icon: "home" },
+  { href: "/sortiment", label: "Sortiment", icon: "search" },
+  { href: "/shop", label: "Shop", icon: "bag" },
 ];
 
+const itemClass =
+  "flex h-[60px] flex-1 flex-col items-center justify-center gap-[3px] text-[11px] font-extrabold";
+
+/** Schwebende Leiste unten am Handy: Start, Sortiment, Shop, Termin, Menü */
 export function MobileTabBar() {
   const pathname = usePathname();
-  const [appointmentOpen, setAppointmentOpen] = useState(false);
+  const { openAppointment } = useAppointment();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Produktseiten haben eine eigene Kauf-Leiste (Entwurf „Shop · Produkt Mobil“)
+  if (/^\/shop\/[^/]+/.test(pathname)) return null;
 
   return (
     <>
       <nav
-        aria-label="Mobile Navigation"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-linie bg-stein/95 backdrop-blur md:hidden"
-        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+        aria-label="Schnellnavigation"
+        className="fixed inset-x-3 z-40 flex h-16 items-center rounded-[20px] bg-nachtblau px-1.5 shadow-[0_12px_30px_rgba(14,36,45,0.35)] lg:hidden"
+        style={{ bottom: "calc(12px + env(safe-area-inset-bottom))" }}
       >
-        <ul className="grid grid-cols-5">
-          {tabs.map((tab) => {
-            const active = pathname === tab.href;
-            return (
-              <li key={tab.href}>
-                <Link
-                  href={tab.href}
-                  aria-current={active ? "page" : undefined}
-                  className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[11px] font-medium ${
-                    active ? "text-linkblau" : "text-text-muted"
-                  }`}
-                >
-                  <Icon name={tab.icon} className="h-5 w-5" />
-                  {tab.label}
-                </Link>
-              </li>
-            );
-          })}
-          <li>
-            <button
-              type="button"
-              onClick={() => setAppointmentOpen(true)}
-              className="flex min-h-[56px] w-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-text-muted"
+        {tabs.map((tab) => {
+          const active =
+            tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
+          return (
+            <Link
+              key={tab.href}
+              href={tab.href}
+              aria-current={active ? "page" : undefined}
+              className={`${itemClass} ${active ? "text-logogelb" : "text-hellblau"}`}
             >
-              <Icon name="calendar" className="h-5 w-5" />
-              Termin
-            </button>
-          </li>
-          <li>
-            <button
-              type="button"
-              onClick={() => setMenuOpen(true)}
-              className="flex min-h-[56px] w-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-text-muted"
-            >
-              <Icon name="menu" className="h-5 w-5" />
-              Menü
-            </button>
-          </li>
-        </ul>
+              <Icon name={tab.icon} size={24} />
+              <span>{tab.label}</span>
+            </Link>
+          );
+        })}
+        <button
+          type="button"
+          onClick={openAppointment}
+          className={`${itemClass} text-hellblau`}
+        >
+          <Icon name="calendar" size={24} />
+          <span>Termin</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          aria-haspopup="dialog"
+          className={`${itemClass} text-hellblau`}
+        >
+          <Icon name="menu" size={24} />
+          <span>Menü</span>
+        </button>
       </nav>
-      <AppointmentSheet
-        open={appointmentOpen}
-        onClose={() => setAppointmentOpen(false)}
-      />
       <MobileMenuSheet open={menuOpen} onClose={() => setMenuOpen(false)} />
     </>
   );

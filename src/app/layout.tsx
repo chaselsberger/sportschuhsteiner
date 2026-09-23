@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { bodyFont, headingFont } from "@/lib/fonts";
-import { brand } from "@/brand.config";
+import { brand, serviceAreas } from "@/brand.config";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MobileTabBar } from "@/components/MobileTabBar";
 import { CookieBanner } from "@/components/CookieBanner";
 import { CookieConsentProvider } from "@/lib/cookie-consent";
+import { AppointmentProvider } from "@/lib/appointment";
 
 const siteUrl = brand.isStaging
   ? "https://vorschau.sport-schuh-steiner.at"
@@ -23,6 +24,16 @@ export const metadata: Metadata = {
   robots: brand.isStaging
     ? { index: false, follow: false }
     : { index: true, follow: true },
+};
+
+const schemaDays = {
+  mo: "Monday",
+  di: "Tuesday",
+  mi: "Wednesday",
+  do: "Thursday",
+  fr: "Friday",
+  sa: "Saturday",
+  so: "Sunday",
 };
 
 function localBusinessJsonLd() {
@@ -42,6 +53,17 @@ function localBusinessJsonLd() {
       addressCountry: brand.address.country,
     },
     url: siteUrl,
+    sameAs: [brand.social.instagram, brand.social.facebook],
+    areaServed: serviceAreas,
+    openingHoursSpecification: Object.entries(brand.openingHours).flatMap(
+      ([day, ranges]) =>
+        (ranges as unknown as [string, string][]).map(([opens, closes]) => ({
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: `https://schema.org/${schemaDays[day as keyof typeof schemaDays]}`,
+          opens,
+          closes,
+        })),
+    ),
   };
 }
 
@@ -65,13 +87,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Zum Inhalt springen
         </a>
         <CookieConsentProvider>
-          <Header />
-          <main id="main" className="flex-1 pb-16 md:pb-0">
-            {children}
-          </main>
-          <Footer />
-          <MobileTabBar />
-          <CookieBanner />
+          <AppointmentProvider>
+            <Header />
+            <main id="main" className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <MobileTabBar />
+            <CookieBanner />
+          </AppointmentProvider>
         </CookieConsentProvider>
       </body>
     </html>

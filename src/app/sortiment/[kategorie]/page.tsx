@@ -1,26 +1,30 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
-import { categories } from "@/brand.config";
+import { notFound } from "next/navigation";
+import { brand, categories } from "@/brand.config";
 import { Icon } from "@/components/Icon";
+import { PageHero } from "@/components/PageHero";
+import { ProductCard } from "@/components/ProductCard";
+import { badgeFor, demoProducts } from "@/lib/demo-products";
 
 const descriptions: Record<(typeof categories)[number]["slug"], string> = {
   laufschuhe:
-    "Passende Schuhe für jeden Tag — für die Runde am Morgen, den Kaffee zu Mittag und das Fest am Abend. Mit Gangbildanalyse zur passenden Dämpfung.",
+    "Passende Schuhe für jeden Tag – für die Runde am Morgen und den langen Lauf am Wochenende. Mit Gangbildanalyse zur passenden Dämpfung.",
   trailschuhe:
     "Griffige Profile und stabiler Halt für unwegsames Gelände rund um den Wilden Kaiser.",
   wanderschuhe:
-    "Über Stock und über Stein — der passende Schuh fürs Bergerlebnis, von der Halbschuh-Wanderung bis zur Hochtour.",
+    "Über Stock und über Stein – der passende Schuh fürs Bergerlebnis, von der Hüttenwanderung bis zur Hochtour.",
   skischuhe:
-    "Im Winter ist die Schale entscheidend: Der weiche Innenschuh schmiegt sich an, die Schale gibt Halt. Mit Bootfitting seit 2006.",
+    "Im Winter ist die Schale entscheidend: Der Innenschuh schmiegt sich an, die Schale gibt Halt. Mit Bootfitting seit 2006.",
   skitourenschuhe:
-    "Leicht bergauf, sicher bergab — Skitourenschuhe, individuell angepasst für lange Aufstiege.",
+    "Leicht bergauf, sicher bergab – Skitourenschuhe, individuell angepasst für lange Aufstiege.",
   schneeschuhe:
-    "Schneeschuhe zum Kauf oder im Verleih — mit 10 % Ermäßigung bei Vorlage der Wilder Kaiser GuestCard.",
+    "Schneeschuhe zum Kauf oder im Verleih – mit 10 % Ermäßigung bei Vorlage der Wilder Kaiser GuestCard.",
   berufsschuhe:
-    "Berufsschuhe für Post, Gastronomie und Pflege — den ganzen Tag komfortabel und sicher im Stand.",
+    "Berufsschuhe für Post, Gastronomie und Pflege – den ganzen Tag bequem und sicher auf den Beinen.",
   barfussschuhe:
-    "Spüren, worauf man sich bewegt: gesunde Füße und merkbaren Grip mit hochwertigen Barfußschuhen für Erwachsene und Kinder.",
+    "Spüren, worauf man sich bewegt: gesunde Füße und guter Grip mit hochwertigen Barfußschuhen für Erwachsene und Kinder.",
 };
 
 export function generateStaticParams() {
@@ -35,7 +39,7 @@ export async function generateMetadata({
   if (!cat) return {};
   return {
     title: cat.label,
-    description: descriptions[cat.slug],
+    description: `${descriptions[cat.slug]} ${brand.name}, Scheffau am Wilden Kaiser.`,
   };
 }
 
@@ -46,47 +50,89 @@ export default async function KategoriePage({
   const cat = categories.find((c) => c.slug === kategorie);
   if (!cat) notFound();
 
+  const products = demoProducts
+    .filter((p) => p.category === cat.shop)
+    .slice(0, 4);
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
-      <nav aria-label="Breadcrumb" className="text-sm text-text-muted">
-        <Link href="/sortiment" className="hover:text-linkblau">
-          Sortiment
-        </Link>{" "}
-        / {cat.label}
-      </nav>
+    <>
+      <PageHero
+        crumbs={[
+          { href: "/", label: "Start" },
+          { href: "/sortiment", label: "Sortiment" },
+          { label: cat.label },
+        ]}
+        title={cat.label}
+        lead={descriptions[cat.slug]}
+      />
 
-      <div className="mt-3 flex items-center gap-3">
-        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-stein-2 text-nachtblau">
-          <Icon name={cat.icon} className="h-6 w-6" />
-        </span>
-        <h1 className="font-[var(--font-heading)] text-4xl uppercase text-nachtblau">
-          {cat.label}
-        </h1>
-      </div>
-      <p className="mt-4 max-w-2xl text-lg text-text-muted">
-        {descriptions[cat.slug]}
-      </p>
+      <section className="page-x flex flex-col gap-8 py-10 lg:flex-row lg:gap-14 lg:py-16">
+        <div className="relative h-[260px] overflow-hidden rounded-3xl lg:h-[420px] lg:w-[55%] lg:shrink-0">
+          <Image
+            src={cat.image}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 55vw, 100vw"
+            className="object-cover"
+            style={{ objectPosition: cat.position }}
+          />
+        </div>
+        <div className="flex flex-1 flex-col justify-center gap-4">
+          <span className="text-linkblau">
+            <Icon name={cat.icon} size={44} />
+          </span>
+          <h2 className="t-h3 text-nachtblau">Beratung zuerst</h2>
+          <p className="m-0 text-base leading-relaxed text-text-muted">
+            Welcher Schuh passt, zeigt sich am Fuß – nicht im Katalog. Wir
+            messen, beraten und passen an, damit Sie mit einem Paar nach Hause
+            gehen, das wirklich sitzt.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href="#termin"
+              className="flex h-[52px] items-center gap-2.5 rounded-full bg-logogelb px-6 font-extrabold text-nachtblau hover:brightness-95"
+            >
+              <Icon name="calendar" size={20} />
+              Beratung anfragen
+            </a>
+            <Link
+              href="/sortiment"
+              className="flex h-[52px] items-center gap-2.5 rounded-full border-2 border-nachtblau px-6 font-extrabold text-nachtblau hover:bg-white"
+            >
+              Alle Kategorien
+            </Link>
+          </div>
+        </div>
+      </section>
 
-      <div className="mt-10 rounded-[24px] border border-dashed border-linie bg-stein-2/50 p-6 text-text-muted">
-        Einzelstücke aus dieser Kategorie erscheinen hier, sobald der
-        Online-Shop live ist. Bis dahin berät dich das Team gerne persönlich
-        im Geschäft.
-      </div>
-
-      <div className="mt-8 flex flex-wrap gap-3">
-        <Link
-          href="/kontakt#termin"
-          className="min-h-[44px] rounded-full bg-logogelb px-6 py-2.5 font-bold text-nachtblau"
-        >
-          Beratung anfragen
-        </Link>
-        <Link
-          href="/sortiment"
-          className="min-h-[44px] rounded-full border-2 border-nachtblau px-6 py-2.5 font-semibold text-nachtblau"
-        >
-          Alle Kategorien
-        </Link>
-      </div>
-    </div>
+      {products.length > 0 && (
+        <section className="page-x flex flex-col gap-6 pb-16">
+          <div className="flex items-end justify-between gap-6">
+            <h2 className="t-h3 text-nachtblau">Einzelstücke im Shop</h2>
+            <Link
+              href="/shop"
+              className="flex items-center gap-2 font-extrabold"
+            >
+              Alle <Icon name="arrow" size={18} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+            {products.map((p) => (
+              <ProductCard
+                key={p.slug}
+                product={p}
+                badge={badgeFor(p)}
+                variant="shop"
+              />
+            ))}
+          </div>
+          {brand.isStaging && (
+            <p className="m-0 text-[13px] text-grau">
+              Vorschau: Produkte und Preise sind Beispieldaten.
+            </p>
+          )}
+        </section>
+      )}
+    </>
   );
 }

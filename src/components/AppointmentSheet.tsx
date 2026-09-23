@@ -63,19 +63,22 @@ export function AppointmentSheet({
         aria-describedby={`${formId}-hint`}
       >
         <p id={`${formId}-hint`} className="text-sm text-text-muted">
-          Kein Buchungssystem — wir bestätigen deine Anfrage persönlich per
+          Kein Buchungssystem — wir bestätigen Ihre Anfrage persönlich per
           WhatsApp oder E-Mail.
         </p>
 
         <div>
-          <label htmlFor={`${formId}-reason`} className="block text-sm font-medium">
+          <label
+            htmlFor={`${formId}-reason`}
+            className="block text-[13px] font-extrabold text-nachtblau"
+          >
             Anliegen
           </label>
           <select
             id={`${formId}-reason`}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            className="mt-1 w-full rounded-[12px] border border-linie bg-white px-3 py-2.5"
+            className="mt-1.5 h-[52px] w-full rounded-xl border border-formrand bg-white px-4 text-base"
           >
             {appointmentReasons.map((r) => (
               <option key={r} value={r}>
@@ -87,7 +90,10 @@ export function AppointmentSheet({
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor={`${formId}-day`} className="block text-sm font-medium">
+            <label
+              htmlFor={`${formId}-day`}
+              className="block text-[13px] font-extrabold text-nachtblau"
+            >
               Wunschtag
             </label>
             <input
@@ -95,22 +101,24 @@ export function AppointmentSheet({
               type="date"
               value={day}
               onChange={(e) => setDay(e.target.value)}
-              className="mt-1 w-full rounded-[12px] border border-linie bg-white px-3 py-2.5"
+              className="mt-1.5 h-[52px] w-full rounded-xl border border-formrand bg-white px-4 text-base"
             />
           </div>
           <div>
-            <span className="block text-sm font-medium">Tageszeit</span>
-            <div className="mt-1 flex gap-2">
+            <span className="block text-[13px] font-extrabold text-nachtblau">
+              Tageszeit
+            </span>
+            <div className="mt-1.5 flex gap-2">
               {(["vormittag", "nachmittag"] as const).map((slot) => (
                 <button
                   type="button"
                   key={slot}
                   onClick={() => setTime(time === slot ? "" : slot)}
                   aria-pressed={time === slot}
-                  className={`min-h-[44px] flex-1 rounded-full border px-2 text-sm capitalize ${
+                  className={`h-[52px] flex-1 rounded-xl border-2 px-2 text-sm font-extrabold capitalize ${
                     time === slot
-                      ? "border-nachtblau bg-nachtblau text-stein"
-                      : "border-linie bg-white"
+                      ? "border-nachtblau bg-nachtblau text-white"
+                      : "border-linie bg-white text-nachtblau"
                   }`}
                 >
                   {slot}
@@ -121,7 +129,10 @@ export function AppointmentSheet({
         </div>
 
         <div>
-          <label htmlFor={`${formId}-name`} className="block text-sm font-medium">
+          <label
+            htmlFor={`${formId}-name`}
+            className="block text-[13px] font-extrabold text-nachtblau"
+          >
             Name
           </label>
           <input
@@ -130,12 +141,15 @@ export function AppointmentSheet({
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full rounded-[12px] border border-linie bg-white px-3 py-2.5"
+            className="mt-1.5 h-[52px] w-full rounded-xl border border-formrand bg-white px-4 text-base"
           />
         </div>
 
         <div>
-          <label htmlFor={`${formId}-note`} className="block text-sm font-medium">
+          <label
+            htmlFor={`${formId}-note`}
+            className="block text-[13px] font-extrabold text-nachtblau"
+          >
             Notiz (optional)
           </label>
           <textarea
@@ -143,7 +157,7 @@ export function AppointmentSheet({
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={2}
-            className="mt-1 w-full rounded-[12px] border border-linie bg-white px-3 py-2.5"
+            className="mt-1.5 w-full rounded-xl border border-formrand bg-white px-4 py-3 text-base"
           />
         </div>
 
@@ -156,9 +170,9 @@ export function AppointmentSheet({
             onClick={(e) => {
               if (!name) e.preventDefault();
             }}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 font-semibold text-white aria-disabled:opacity-50"
+            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-full bg-[#1f7a4a] px-4 font-extrabold text-white aria-disabled:opacity-50"
           >
-            <Icon name="whatsapp" className="h-5 w-5" />
+            <Icon name="whatsapp" size={20} />
             Per WhatsApp senden
           </a>
           <a
@@ -167,15 +181,15 @@ export function AppointmentSheet({
             onClick={(e) => {
               if (!name) e.preventDefault();
             }}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border-2 border-nachtblau px-4 py-2.5 font-semibold text-nachtblau aria-disabled:opacity-50"
+            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-full border-2 border-nachtblau px-4 font-extrabold text-nachtblau aria-disabled:opacity-50"
           >
-            <Icon name="mail" className="h-5 w-5" />
+            <Icon name="mail" size={20} />
             Per E-Mail senden
           </a>
         </div>
-        <p className="text-xs text-text-muted">
-          Die Anfrage wird nicht gespeichert — dein Gerät öffnet WhatsApp bzw.
-          dein E-Mail-Programm mit vorausgefüllter Nachricht.
+        <p className="text-xs text-grau">
+          Die Anfrage wird nicht gespeichert — Ihr Gerät öffnet WhatsApp bzw.
+          Ihr E-Mail-Programm mit vorausgefüllter Nachricht.
         </p>
       </form>
     </BottomSheet>

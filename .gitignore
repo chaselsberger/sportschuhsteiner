@@ -9,3 +9,6 @@ out/
 tmp/
 public/.php-ini
 public/.php-version
+
+# TypeScript-Build-Cache, kein Quellcode
+tsconfig.tsbuildinfo

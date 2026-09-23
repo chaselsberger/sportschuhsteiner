@@ -27,7 +27,7 @@ export function MobileMenuSheet({
             <Link
               href={link.href}
               onClick={onClose}
-              className="flex min-h-[44px] items-center rounded-[12px] px-2 text-lg font-medium hover:bg-stein-2"
+              className="flex min-h-[52px] items-center justify-between rounded-xl px-3 text-lg font-extrabold text-nachtblau hover:bg-stein-2"
             >
               {link.label}
             </Link>
