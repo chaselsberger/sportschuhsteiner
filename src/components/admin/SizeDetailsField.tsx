@@ -7,10 +7,10 @@ type Gender = "Damen" | "Herren" | "Kinder";
 
 /**
  * Größendetails-Feld mit automatischem UK/US-Vorschlag: sobald eine
- * EU-Größe gewählt ist, wird darunter z. B. "Vorschlag: UK 9,5 · US 10,5"
- * angezeigt. Ein Klick übernimmt den Vorschlag ins Feld – nie automatisch,
- * damit ein bereits vom Schuhkarton abgetipptes Detail nicht überschrieben
- * wird.
+ * EU-Größe gewählt ist, wird das Feld direkt mit z. B. "UK 9,5 · US 10"
+ * befüllt – ohne extra Klick. Sobald jemand das Feld von Hand ändert
+ * (z. B. cm ergänzt oder den Wert vom Schuhkarton korrigiert), wird es bei
+ * weiteren Größenänderungen nicht mehr automatisch überschrieben.
  */
 export function SizeDetailsField({
   id,
@@ -23,10 +23,13 @@ export function SizeDetailsField({
   gender: Gender;
   defaultValue?: string;
 }) {
-  const [value, setValue] = useState(defaultValue);
+  // null = noch nicht von Hand bearbeitet -> automatischer Vorschlag greift.
+  const [manualValue, setManualValue] = useState<string | null>(
+    defaultValue.trim() !== "" ? defaultValue : null,
+  );
 
   const suggestion = euSize !== null ? suggestSizeDetails(euSize, gender) : null;
-  const showSuggestion = suggestion && value.trim() !== suggestion;
+  const value = manualValue ?? suggestion ?? "";
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -38,19 +41,10 @@ export function SizeDetailsField({
         name="sizeDetails"
         type="text"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => setManualValue(e.target.value)}
         placeholder="UK 9,5 · US 10 · 28 cm"
         className="h-[52px] rounded-xl border border-formrand bg-white px-4 text-base"
       />
-      {showSuggestion && (
-        <button
-          type="button"
-          onClick={() => setValue(suggestion)}
-          className="self-start text-[12px] font-bold text-linkblau"
-        >
-          Vorschlag: {suggestion} – übernehmen
-        </button>
-      )}
     </div>
   );
 }
