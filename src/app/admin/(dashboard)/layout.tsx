@@ -25,6 +25,7 @@ export default async function AdminDashboardLayout({
         <nav className="flex items-center gap-4 text-sm font-bold">
           <Link href="/admin">Erfassen</Link>
           <Link href="/admin/produkte">Produkte</Link>
+          <Link href="/admin/verkaeufe">Verkäufe</Link>
           <AdminLogoutButton />
         </nav>
       </header>

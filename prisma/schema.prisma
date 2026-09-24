@@ -27,6 +27,12 @@ enum Gender {
   Kinder
 }
 
+enum OrderStatus {
+  bezahlt
+  storniert
+  erstattet
+}
+
 model Product {
   id            String        @id @default(cuid())
   slug          String        @unique
@@ -52,6 +58,7 @@ model Product {
   imageFit      String?
   imagePosition String?
   photos        ProductPhoto[]
+  orders        Order[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 }
@@ -63,6 +70,24 @@ model ProductPhoto {
   dateiname String
   sortIndex Int      @default(0)
   createdAt DateTime @default(now())
+}
+
+model Order {
+  id                    String      @id @default(cuid())
+  orderNumber           String      @unique
+  stripeSessionId       String      @unique
+  stripePaymentIntentId String?
+  productId             String?
+  product               Product?    @relation(fields: [productId], references: [id], onDelete: SetNull)
+  /// Titel zum Kaufzeitpunkt – bleibt lesbar, auch wenn das Produkt später gelöscht wird.
+  productTitle          String
+  /// In Cent, wie Stripe (im Unterschied zu Product.price, das volle Euro sind).
+  amountTotal           Int
+  currency              String      @default("eur")
+  customerEmail         String?
+  customerName          String?
+  status                OrderStatus @default(bezahlt)
+  createdAt             DateTime    @default(now())
 }
 
 model AdminUser {

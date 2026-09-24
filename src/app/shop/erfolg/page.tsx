@@ -5,7 +5,6 @@ import { brand } from "@/brand.config";
 import { Icon } from "@/components/Icon";
 import { PageHero } from "@/components/PageHero";
 import { euro } from "@/lib/product-types";
-import { markProductSold } from "@/lib/products";
 import { stripe } from "@/lib/stripe";
 
 export const metadata: Metadata = {
@@ -30,11 +29,11 @@ export default async function CheckoutErfolgPage({
     redirect("/shop");
   }
 
-  const productId = session.metadata?.productId;
-  if (typeof productId === "string" && productId) {
-    await markProductSold(productId);
-  }
-
+  // Die eigentliche Bestellung (DB-Eintrag + Produkt als verkauft markieren)
+  // entsteht zuverlässig über den Stripe-Webhook (src/app/api/webhooks/stripe),
+  // nicht hier – sonst würde ein verlassener Browser-Tab nach der Zahlung dazu
+  // führen, dass nie eine Order angelegt wird. Diese Seite zeigt nur die
+  // Bestätigung an.
   const item = session.line_items?.data[0];
   const amount =
     typeof session.amount_total === "number" ? session.amount_total / 100 : null;
