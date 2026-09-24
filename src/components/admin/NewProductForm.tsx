@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminSizeOptions, MAX_PRODUCT_PHOTOS, shopCategories } from "@/lib/product-types";
+import { BrandPicker } from "./BrandPicker";
+import { SizeDetailsField } from "./SizeDetailsField";
 
 const genders = ["Damen", "Herren", "Kinder"] as const;
 
@@ -14,14 +16,8 @@ export function NewProductForm() {
   const [previews, setPreviews] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<"veroeffentlicht" | "entwurf" | null>(null);
-  const [brands, setBrands] = useState<string[]>([]);
-
-  useEffect(() => {
-    fetch("/api/admin/marken")
-      .then((res) => res.json())
-      .then((data) => setBrands(Array.isArray(data?.brands) ? data.brands : []))
-      .catch(() => {});
-  }, []);
+  const [euSize, setEuSize] = useState<number | null>(null);
+  const [gender, setGender] = useState<(typeof genders)[number]>("Damen");
 
   function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
@@ -109,25 +105,7 @@ export function NewProductForm() {
       </div>
 
       <div className="grid grid-cols-2 gap-3.5">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={`${id}-brand`} className="text-[13px] font-extrabold text-nachtblau">
-            Marke
-          </label>
-          <input
-            id={`${id}-brand`}
-            name="brand"
-            type="text"
-            list={`${id}-brand-list`}
-            required
-            autoComplete="off"
-            className="h-[52px] rounded-xl border border-formrand bg-white px-4 text-base"
-          />
-          <datalist id={`${id}-brand-list`}>
-            {brands.map((b) => (
-              <option key={b} value={b} />
-            ))}
-          </datalist>
-        </div>
+        <BrandPicker id={`${id}-brand`} name="brand" required />
         <Field label="Modell" name="model" id={`${id}-model`} required />
       </div>
 
@@ -157,6 +135,8 @@ export function NewProductForm() {
             id={`${id}-gender`}
             name="gender"
             required
+            value={gender}
+            onChange={(e) => setGender(e.target.value as (typeof genders)[number])}
             className="h-[52px] rounded-xl border border-formrand bg-white px-3 text-base"
           >
             {genders.map((g) => (
@@ -178,6 +158,7 @@ export function NewProductForm() {
             name="size"
             required
             defaultValue=""
+            onChange={(e) => setEuSize(e.target.value ? Number(e.target.value) : null)}
             className="h-[52px] rounded-xl border border-formrand bg-white px-3 text-base"
           >
             <option value="" disabled>
@@ -190,12 +171,7 @@ export function NewProductForm() {
             ))}
           </select>
         </div>
-        <Field
-          label="Größendetails"
-          name="sizeDetails"
-          id={`${id}-sizeDetails`}
-          placeholder="UK 9,5 · US 10 · 28 cm"
-        />
+        <SizeDetailsField id={`${id}-sizeDetails`} euSize={euSize} gender={gender} />
       </div>
 
       <div className="grid grid-cols-2 gap-3.5">

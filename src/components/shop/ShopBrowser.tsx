@@ -81,10 +81,12 @@ function Checkbox({
 /**
  * Shop-Übersicht laut Entwurf: Größe zuerst (wird gemerkt), Filter für
  * Kategorie, Für, Marke und Preis. Jedes Paar gibt es genau einmal.
+ * Kategorie ist – wie Für und Marke – als Mehrfachauswahl nutzbar, z. B.
+ * "Laufen" + "Wandern & Berg" gleichzeitig.
  */
 export function ShopBrowser({ products }: { products: Product[] }) {
   const size = useSyncExternalStore(subscribeSize, readSize, () => null);
-  const [category, setCategory] = useState<ShopCategory | null>(null);
+  const [categories, setCategories] = useState<ShopCategory[]>([]);
   const [gender, setGender] = useState<string[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [maxPrice, setMaxPrice] = useState(PRICE_MAX);
@@ -107,7 +109,7 @@ export function ShopBrowser({ products }: { products: Product[] }) {
 
   const bySize = size ? products.filter((p) => p.size === size) : products;
   const filtered = bySize
-    .filter((p) => !category || p.category === category)
+    .filter((p) => categories.length === 0 || categories.includes(p.category))
     .filter((p) => gender.length === 0 || gender.includes(p.gender))
     .filter((p) => brands.length === 0 || brands.includes(p.brand))
     .filter((p) => p.price >= minPrice && p.price <= maxPrice)
@@ -119,18 +121,15 @@ export function ShopBrowser({ products }: { products: Product[] }) {
           : 0,
     );
 
-  const toggle = (list: string[], value: string) =>
-    list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+  function toggle<T>(list: T[], value: T): T[] {
+    return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+  }
 
   const chips = [
-    ...(category
-      ? [
-          {
-            label: shopCategories.find((c) => c.key === category)!.label,
-            clear: () => setCategory(null),
-          },
-        ]
-      : []),
+    ...categories.map((key) => ({
+      label: shopCategories.find((c) => c.key === key)!.label,
+      clear: () => setCategories(toggle(categories, key)),
+    })),
     ...gender.map((g) => ({
       label: g,
       clear: () => setGender(toggle(gender, g)),
@@ -319,13 +318,13 @@ export function ShopBrowser({ products }: { products: Product[] }) {
               Kategorie
             </p>
             {shopCategories.map((c) => {
-              const active = category === c.key;
+              const active = categories.includes(c.key);
               return (
                 <button
                   key={c.key}
                   type="button"
                   aria-pressed={active}
-                  onClick={() => setCategory(active ? null : c.key)}
+                  onClick={() => setCategories(toggle(categories, c.key))}
                   className={`flex items-center gap-3 rounded-xl py-2.5 pl-0 pr-3 text-left text-[15px] font-bold ${
                     active
                       ? "bg-nachtblau text-white"
@@ -375,13 +374,13 @@ export function ShopBrowser({ products }: { products: Product[] }) {
               Filter{chips.length > 0 ? ` (${chips.length})` : ""}
             </button>
             {shopCategories.map((c) => {
-              const active = category === c.key;
+              const active = categories.includes(c.key);
               return (
                 <button
                   key={c.key}
                   type="button"
                   aria-pressed={active}
-                  onClick={() => setCategory(active ? null : c.key)}
+                  onClick={() => setCategories(toggle(categories, c.key))}
                   className={`flex h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-bold ${
                     active
                       ? "border-nachtblau bg-nachtblau text-white"

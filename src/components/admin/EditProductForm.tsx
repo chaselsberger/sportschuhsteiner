@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { adminSizeOptions, MAX_PRODUCT_PHOTOS, shopCategories, type ShopCategory } from "@/lib/product-types";
+import { BrandPicker } from "./BrandPicker";
+import { SizeDetailsField } from "./SizeDetailsField";
 
 const genders = ["Damen", "Herren", "Kinder"] as const;
 const statusOptions = [
@@ -47,14 +49,8 @@ export function EditProductForm({
   const [saving, setSaving] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [busyPhotoId, setBusyPhotoId] = useState<string | null>(null);
-  const [brands, setBrands] = useState<string[]>([]);
-
-  useEffect(() => {
-    fetch("/api/admin/marken")
-      .then((res) => res.json())
-      .then((data) => setBrands(Array.isArray(data?.brands) ? data.brands : []))
-      .catch(() => {});
-  }, []);
+  const [euSize, setEuSize] = useState<number | null>(initial.size);
+  const [gender, setGender] = useState<(typeof genders)[number]>(initial.gender);
 
   const remainingPhotoSlots = MAX_PRODUCT_PHOTOS - photos.length;
 
@@ -205,26 +201,7 @@ export function EditProductForm({
       </div>
 
       <div className="grid grid-cols-2 gap-3.5">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={`${fieldId}-brand`} className="text-[13px] font-extrabold text-nachtblau">
-            Marke
-          </label>
-          <input
-            id={`${fieldId}-brand`}
-            name="brand"
-            type="text"
-            list={`${fieldId}-brand-list`}
-            defaultValue={initial.brand}
-            required
-            autoComplete="off"
-            className="h-[52px] rounded-xl border border-formrand bg-white px-4 text-base"
-          />
-          <datalist id={`${fieldId}-brand-list`}>
-            {brands.map((b) => (
-              <option key={b} value={b} />
-            ))}
-          </datalist>
-        </div>
+        <BrandPicker id={`${fieldId}-brand`} name="brand" defaultValue={initial.brand} required />
         <Field label="Modell" name="model" id={`${fieldId}-model`} defaultValue={initial.model} required />
       </div>
 
@@ -256,7 +233,8 @@ export function EditProductForm({
           <select
             id={`${fieldId}-gender`}
             name="gender"
-            defaultValue={initial.gender}
+            value={gender}
+            onChange={(e) => setGender(e.target.value as (typeof genders)[number])}
             required
             className="h-[52px] rounded-xl border border-formrand bg-white px-3 text-base"
           >
@@ -279,6 +257,7 @@ export function EditProductForm({
             name="size"
             required
             defaultValue={initial.size}
+            onChange={(e) => setEuSize(e.target.value ? Number(e.target.value) : null)}
             className="h-[52px] rounded-xl border border-formrand bg-white px-3 text-base"
           >
             {!adminSizeOptions.includes(initial.size) && (
@@ -291,12 +270,11 @@ export function EditProductForm({
             ))}
           </select>
         </div>
-        <Field
-          label="Größendetails"
-          name="sizeDetails"
+        <SizeDetailsField
           id={`${fieldId}-sizeDetails`}
+          euSize={euSize}
+          gender={gender}
           defaultValue={initial.sizeDetails}
-          placeholder="UK 9,5 · US 10 · 28 cm"
         />
       </div>
 
