@@ -326,7 +326,7 @@ export function ShopBrowser({ products }: { products: Product[] }) {
                   type="button"
                   aria-pressed={active}
                   onClick={() => setCategory(active ? null : c.key)}
-                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[15px] font-bold ${
+                  className={`flex items-center gap-3 rounded-xl py-2.5 pl-0 pr-3 text-left text-[15px] font-bold ${
                     active
                       ? "bg-nachtblau text-white"
                       : "text-nachtblau hover:bg-stein-2"
