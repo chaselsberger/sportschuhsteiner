@@ -3,6 +3,7 @@ import path from "node:path";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { shopCategories, type ShopCategory } from "@/lib/product-types";
+import { joinCategories } from "@/lib/product-categories";
 
 const PHOTOS_DIR = process.env.PRODUCT_PHOTOS_DIR;
 
@@ -73,13 +74,19 @@ export async function PATCH(
         ? body.title.trim()
         : `${data.brand ?? ""} ${data.model ?? ""}`.trim();
   }
-  if (body.category !== undefined) {
-    const categoryMeta = shopCategories.find((c) => c.key === body.category);
-    if (!categoryMeta) {
-      return NextResponse.json({ error: "Ungültige Kategorie." }, { status: 400 });
+  if (body.categories !== undefined) {
+    const categories = Array.isArray(body.categories) ? (body.categories as unknown[]) : [];
+    const valid =
+      categories.length > 0 &&
+      categories.every((c) => typeof c === "string" && shopCategories.some((sc) => sc.key === c));
+    if (!valid) {
+      return NextResponse.json({ error: "Bitte mindestens eine gültige Kategorie wählen." }, { status: 400 });
     }
+    const typedCategories = categories as ShopCategory[];
+    const categoryMeta = shopCategories.find((c) => c.key === typedCategories[0])!;
     data.category = categoryMeta.key as ShopCategory;
     data.categoryLabel = categoryMeta.label;
+    data.categories = joinCategories(typedCategories);
   }
   if (body.gender !== undefined) {
     if (!GENDER_VALUES.includes(body.gender)) {

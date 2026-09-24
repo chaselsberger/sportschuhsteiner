@@ -2,8 +2,9 @@
 
 import { useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { adminSizeOptions, MAX_PRODUCT_PHOTOS, shopCategories } from "@/lib/product-types";
+import { adminSizeOptions, MAX_PRODUCT_PHOTOS, type ShopCategory } from "@/lib/product-types";
 import { BrandPicker } from "./BrandPicker";
+import { CategoryPicker } from "./CategoryPicker";
 import { SizeDetailsField } from "./SizeDetailsField";
 
 const genders = ["Damen", "Herren", "Kinder"] as const;
@@ -18,6 +19,7 @@ export function NewProductForm() {
   const [loading, setLoading] = useState<"veroeffentlicht" | "entwurf" | null>(null);
   const [euSize, setEuSize] = useState<number | null>(null);
   const [gender, setGender] = useState<(typeof genders)[number]>("Damen");
+  const [categories, setCategories] = useState<ShopCategory[]>([]);
 
   function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
@@ -33,6 +35,10 @@ export function NewProductForm() {
 
   async function submitForm(status: "veroeffentlicht" | "entwurf") {
     if (!formRef.current?.reportValidity()) return;
+    if (categories.length === 0) {
+      setError("Bitte mindestens eine Kategorie wählen.");
+      return;
+    }
     setError(null);
     setLoading(status);
 
@@ -109,43 +115,26 @@ export function NewProductForm() {
         <Field label="Modell" name="model" id={`${id}-model`} required />
       </div>
 
-      <div className="grid grid-cols-2 gap-3.5">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={`${id}-category`} className="text-[13px] font-extrabold text-nachtblau">
-            Kategorie
-          </label>
-          <select
-            id={`${id}-category`}
-            name="category"
-            required
-            className="h-[52px] rounded-xl border border-formrand bg-white px-3 text-base"
-          >
-            {shopCategories.map((c) => (
-              <option key={c.key} value={c.key}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={`${id}-gender`} className="text-[13px] font-extrabold text-nachtblau">
-            Für
-          </label>
-          <select
-            id={`${id}-gender`}
-            name="gender"
-            required
-            value={gender}
-            onChange={(e) => setGender(e.target.value as (typeof genders)[number])}
-            className="h-[52px] rounded-xl border border-formrand bg-white px-3 text-base"
-          >
-            {genders.map((g) => (
-              <option key={g} value={g}>
-                {g}
-              </option>
-            ))}
-          </select>
-        </div>
+      <CategoryPicker selected={categories} onChange={setCategories} />
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor={`${id}-gender`} className="text-[13px] font-extrabold text-nachtblau">
+          Für
+        </label>
+        <select
+          id={`${id}-gender`}
+          name="gender"
+          required
+          value={gender}
+          onChange={(e) => setGender(e.target.value as (typeof genders)[number])}
+          className="h-[52px] w-full rounded-xl border border-formrand bg-white px-3 text-base sm:w-[calc(50%-7px)]"
+        >
+          {genders.map((g) => (
+            <option key={g} value={g}>
+              {g}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="grid grid-cols-2 gap-3.5">

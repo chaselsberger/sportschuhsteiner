@@ -109,7 +109,7 @@ export function ShopBrowser({ products }: { products: Product[] }) {
 
   const bySize = size ? products.filter((p) => p.size === size) : products;
   const filtered = bySize
-    .filter((p) => categories.length === 0 || categories.includes(p.category))
+    .filter((p) => categories.length === 0 || p.categories.some((c) => categories.includes(c)))
     .filter((p) => gender.length === 0 || gender.includes(p.gender))
     .filter((p) => brands.length === 0 || brands.includes(p.brand))
     .filter((p) => p.price >= minPrice && p.price <= maxPrice)
@@ -152,7 +152,7 @@ export function ShopBrowser({ products }: { products: Product[] }) {
   ];
 
   const categoryCount = (key: ShopCategory) =>
-    bySize.filter((p) => p.category === key).length;
+    bySize.filter((p) => p.categories.includes(key)).length;
 
   const filters = (
     <>

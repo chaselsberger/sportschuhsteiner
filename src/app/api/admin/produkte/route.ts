@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resizeForWeb } from "@/lib/image-resize";
 import { MAX_PRODUCT_PHOTOS, shopCategories, type ShopCategory } from "@/lib/product-types";
+import { joinCategories } from "@/lib/product-categories";
 
 const PHOTOS_DIR = process.env.PRODUCT_PHOTOS_DIR;
 
@@ -56,7 +57,8 @@ export async function POST(request: Request) {
   const brand = str(form, "brand");
   const model = str(form, "model");
   const title = str(form, "title") || `${brand} ${model}`.trim();
-  const category = str(form, "category") as ShopCategory;
+  const categories = form.getAll("categories").filter((v): v is string => typeof v === "string") as ShopCategory[];
+  const category = categories[0];
   const gender = str(form, "gender") as "Damen" | "Herren" | "Kinder";
   const size = Number(str(form, "size"));
   const sizeDetails = str(form, "sizeDetails");
@@ -70,12 +72,14 @@ export async function POST(request: Request) {
   const detailsMaterial = str(form, "detailsMaterial") || null;
   const fitTip = str(form, "fitTip") || null;
 
-  const categoryMeta = shopCategories.find((c) => c.key === category);
+  const categoryMeta = category ? shopCategories.find((c) => c.key === category) : undefined;
+  const allCategoriesValid = categories.every((c) => shopCategories.some((sc) => sc.key === c));
 
   if (
     !brand ||
     !model ||
     !categoryMeta ||
+    !allCategoriesValid ||
     !gender ||
     !Number.isFinite(size) ||
     !sizeDetails ||
@@ -133,6 +137,7 @@ export async function POST(request: Request) {
       title,
       category,
       categoryLabel: categoryMeta.label,
+      categories: joinCategories(categories),
       gender,
       size,
       sizeDetails,

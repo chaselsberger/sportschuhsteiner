@@ -3,8 +3,9 @@
 import { useId, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { adminSizeOptions, MAX_PRODUCT_PHOTOS, shopCategories, type ShopCategory } from "@/lib/product-types";
+import { adminSizeOptions, MAX_PRODUCT_PHOTOS, type ShopCategory } from "@/lib/product-types";
 import { BrandPicker } from "./BrandPicker";
+import { CategoryPicker } from "./CategoryPicker";
 import { SizeDetailsField } from "./SizeDetailsField";
 
 const genders = ["Damen", "Herren", "Kinder"] as const;
@@ -19,6 +20,7 @@ type Initial = {
   model: string;
   title: string;
   category: ShopCategory;
+  categories: ShopCategory[];
   gender: (typeof genders)[number];
   size: number;
   sizeDetails: string;
@@ -51,12 +53,19 @@ export function EditProductForm({
   const [busyPhotoId, setBusyPhotoId] = useState<string | null>(null);
   const [euSize, setEuSize] = useState<number | null>(initial.size);
   const [gender, setGender] = useState<(typeof genders)[number]>(initial.gender);
+  const [categories, setCategories] = useState<ShopCategory[]>(
+    initial.categories.length > 0 ? initial.categories : [initial.category],
+  );
 
   const remainingPhotoSlots = MAX_PRODUCT_PHOTOS - photos.length;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!formRef.current?.reportValidity()) return;
+    if (categories.length === 0) {
+      setError("Bitte mindestens eine Kategorie wählen.");
+      return;
+    }
     setError(null);
     setSaving(true);
 
@@ -65,7 +74,7 @@ export function EditProductForm({
       brand: String(form.get("brand") ?? ""),
       model: String(form.get("model") ?? ""),
       title: String(form.get("title") ?? ""),
-      category: String(form.get("category") ?? ""),
+      categories,
       gender: String(form.get("gender") ?? ""),
       size: String(form.get("size") ?? ""),
       sizeDetails: String(form.get("sizeDetails") ?? ""),
@@ -207,44 +216,26 @@ export function EditProductForm({
 
       <Field label="Titel" name="title" id={`${fieldId}-title`} defaultValue={initial.title} />
 
-      <div className="grid grid-cols-2 gap-3.5">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={`${fieldId}-category`} className="text-[13px] font-extrabold text-nachtblau">
-            Kategorie
-          </label>
-          <select
-            id={`${fieldId}-category`}
-            name="category"
-            defaultValue={initial.category}
-            required
-            className="h-[52px] rounded-xl border border-formrand bg-white px-3 text-base"
-          >
-            {shopCategories.map((c) => (
-              <option key={c.key} value={c.key}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={`${fieldId}-gender`} className="text-[13px] font-extrabold text-nachtblau">
-            Für
-          </label>
-          <select
-            id={`${fieldId}-gender`}
-            name="gender"
-            value={gender}
-            onChange={(e) => setGender(e.target.value as (typeof genders)[number])}
-            required
-            className="h-[52px] rounded-xl border border-formrand bg-white px-3 text-base"
-          >
-            {genders.map((g) => (
-              <option key={g} value={g}>
-                {g}
-              </option>
-            ))}
-          </select>
-        </div>
+      <CategoryPicker selected={categories} onChange={setCategories} />
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor={`${fieldId}-gender`} className="text-[13px] font-extrabold text-nachtblau">
+          Für
+        </label>
+        <select
+          id={`${fieldId}-gender`}
+          name="gender"
+          value={gender}
+          onChange={(e) => setGender(e.target.value as (typeof genders)[number])}
+          required
+          className="h-[52px] w-full rounded-xl border border-formrand bg-white px-3 text-base sm:w-[calc(50%-7px)]"
+        >
+          {genders.map((g) => (
+            <option key={g} value={g}>
+              {g}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="grid grid-cols-2 gap-3.5">

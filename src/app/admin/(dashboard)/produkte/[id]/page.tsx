@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { photoUrl } from "@/lib/products";
+import { parseCategories } from "@/lib/product-categories";
 import { EditProductForm } from "@/components/admin/EditProductForm";
 
 export const metadata: Metadata = { title: "Produkt bearbeiten" };
@@ -46,6 +47,7 @@ export default async function EditProductPage({
           model: product.model,
           title: product.title,
           category: product.category,
+          categories: parseCategories(product.categories),
           gender: product.gender,
           size: product.size,
           sizeDetails: product.sizeDetails,

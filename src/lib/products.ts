@@ -1,6 +1,7 @@
 import "server-only";
 import type { Product as DbProduct, ProductPhoto } from "@prisma/client";
 import { prisma } from "./prisma";
+import { parseCategories } from "./product-categories";
 import type { Product, ShopCategory } from "./product-types";
 
 export type {
@@ -33,6 +34,7 @@ function toProduct(p: DbProductWithPhotos): Product {
     title: p.title,
     category: p.category as ShopCategory,
     categoryLabel: p.categoryLabel,
+    categories: parseCategories(p.categories),
     gender: p.gender,
     size: p.size,
     sizeDetails: p.sizeDetails,
@@ -79,7 +81,9 @@ export async function getPublishedProductsByCategory(
   limit?: number,
 ): Promise<Product[]> {
   const rows = await prisma.product.findMany({
-    where: { category, status: "veroeffentlicht" },
+    // `categories` ist kommagetrennt; da sich keiner der ShopCategory-Keys
+    // als Teilstring eines anderen überschneidet, reicht ein contains-Filter.
+    where: { categories: { contains: category }, status: "veroeffentlicht" },
     orderBy: { createdAt: "desc" },
     include: publishedInclude,
     take: limit,

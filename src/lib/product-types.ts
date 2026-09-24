@@ -12,8 +12,11 @@ export type Product = {
   model: string;
   /** Kurzname für Karten */
   title: string;
+  /** Hauptkategorie (für Badge/Breadcrumb/Produktseite). */
   category: ShopCategory;
   categoryLabel: string;
+  /** Alle zugewiesenen Kategorien (mind. die Hauptkategorie) – für Filter. */
+  categories: ShopCategory[];
   gender: "Damen" | "Herren" | "Kinder";
   size: number;
   sizeDetails: string;
