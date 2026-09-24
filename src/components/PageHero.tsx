@@ -21,10 +21,10 @@ export function PageHero({
   return (
     <section className="relative overflow-hidden bg-nachtblau text-white">
       <MountainMark
-        width={300}
-        className="absolute right-20 top-[34px] hidden opacity-90 lg:block"
+        width={900}
+        className="pointer-events-none absolute -right-40 -top-32 z-0 hidden opacity-[0.15] sm:block"
       />
-      <div className="page-x relative flex flex-col gap-3.5 pb-9 pt-8 lg:pb-11 lg:pt-10">
+      <div className="page-x relative z-[1] flex flex-col gap-3.5 pb-9 pt-8 lg:pb-11 lg:pt-10">
         <nav aria-label="Brotkrumen" className="text-[13px] text-eisblau">
           <ol className="m-0 flex list-none flex-wrap gap-1 p-0">
             {crumbs.map((c, i) => (
