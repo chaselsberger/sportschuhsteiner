@@ -149,6 +149,8 @@ model Order {
   shippedAt             DateTime?
   /// Optionale Tracking-/Sendungsnummer des Versanddienstleisters.
   trackingNumber        String?
+  /// Interne Notiz des Personals zu diesem Verkauf (z. B. Rückfragen, Sonderwünsche).
+  note                  String?
   createdAt             DateTime    @default(now())
 }
 

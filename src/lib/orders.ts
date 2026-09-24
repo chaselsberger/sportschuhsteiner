@@ -1,6 +1,7 @@
 import "server-only";
 import type Stripe from "stripe";
 import { prisma } from "./prisma";
+import { sendShippedEmail } from "./mailer";
 import { markProductSold } from "./products";
 import { stripe } from "./stripe";
 
@@ -110,8 +111,19 @@ export async function markOrderRefundedByPaymentIntent(paymentIntentId: string) 
   });
 }
 
-export async function listOrders() {
-  return prisma.order.findMany({ orderBy: { createdAt: "desc" } });
+export async function listOrders(range?: { from?: Date; to?: Date }) {
+  const hasRange = range?.from || range?.to;
+  return prisma.order.findMany({
+    where: hasRange
+      ? {
+          createdAt: {
+            ...(range?.from ? { gte: range.from } : {}),
+            ...(range?.to ? { lte: range.to } : {}),
+          },
+        }
+      : undefined,
+    orderBy: { createdAt: "desc" },
+  });
 }
 
 export async function getOrderByStripeSessionId(sessionId: string) {
@@ -134,7 +146,8 @@ export async function toggleVoucherRedeemed(orderId: string) {
 }
 
 /** Markiert eine Bestellung als versendet (mit optionaler Sendungsnummer)
- * bzw. macht das rückgängig, falls versehentlich gesetzt. */
+ * bzw. macht das rückgängig, falls versehentlich gesetzt. Verschickt beim
+ * Wechsel auf "versendet" automatisch eine Benachrichtigung an den Kunden. */
 export async function setOrderShipped(
   orderId: string,
   shipped: boolean,
@@ -143,13 +156,33 @@ export async function setOrderShipped(
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order) throw new Error("Bestellung nicht gefunden.");
 
-  return prisma.order.update({
+  const updated = await prisma.order.update({
     where: { id: orderId },
     data: {
       shipped,
       shippedAt: shipped ? new Date() : null,
       trackingNumber: trackingNumber?.trim() || null,
     },
+  });
+
+  if (shipped && !order.shipped && updated.customerEmail) {
+    await sendShippedEmail({
+      to: updated.customerEmail,
+      customerFirstName: updated.customerName?.split(" ")[0] ?? null,
+      productTitle: updated.productTitle,
+      orderNumber: updated.orderNumber,
+      trackingNumber: updated.trackingNumber,
+    }).catch((err) => console.error("[mailer] Versandbenachrichtigung fehlgeschlagen:", err));
+  }
+
+  return updated;
+}
+
+/** Speichert die interne Notiz zu einem Verkauf (z. B. Rückfragen, Sonderwünsche). */
+export async function setOrderNote(orderId: string, note: string) {
+  return prisma.order.update({
+    where: { id: orderId },
+    data: { note: note.trim() || null },
   });
 }
 

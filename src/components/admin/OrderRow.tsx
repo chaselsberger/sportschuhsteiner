@@ -61,6 +61,7 @@ export function OrderRow({
   shipped = false,
   shippedAt = null,
   trackingNumber = null,
+  note = null,
 }: {
   id: string;
   orderNumber: string;
@@ -88,11 +89,13 @@ export function OrderRow({
   shipped?: boolean;
   shippedAt?: string | null;
   trackingNumber?: string | null;
+  note?: string | null;
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [trackingInput, setTrackingInput] = useState(trackingNumber ?? "");
+  const [noteInput, setNoteInput] = useState(note ?? "");
   const isGutschein = type === "gutschein";
   const hasShippingAddress = Boolean(shippingAddress.line1);
 
@@ -148,6 +151,24 @@ export function OrderRow({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ shipped, trackingNumber: trackingInput }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      setError(data?.error ?? "Fehlgeschlagen.");
+      setBusy(false);
+      return;
+    }
+    router.refresh();
+  }
+
+  async function handleNoteBlur() {
+    if (noteInput === (note ?? "")) return;
+    setBusy(true);
+    setError(null);
+    const res = await fetch(`/api/admin/verkaeufe/${id}/notiz`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ note: noteInput }),
     });
     if (!res.ok) {
       const data = await res.json().catch(() => null);
@@ -214,6 +235,7 @@ export function OrderRow({
           <span className="text-sm text-text-muted">
             {date} · {orderNumber}
             {customerEmail ? ` · ${customerEmail}` : ""}
+            {note ? " · 📝" : ""}
           </span>
           {error && <span className="text-[13px] text-[#b3261e]">{error}</span>}
         </div>
@@ -337,6 +359,18 @@ export function OrderRow({
                 {stripePaymentIntentId}
               </p>
             )}
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <p className="m-0 text-[13px] font-extrabold text-nachtblau">Notiz</p>
+            <textarea
+              value={noteInput}
+              onChange={(e) => setNoteInput(e.target.value)}
+              onBlur={handleNoteBlur}
+              disabled={busy}
+              rows={2}
+              placeholder="Interne Notiz (z. B. Rückfrage, Sonderwunsch) …"
+              className="w-full resize-y rounded-lg border border-karte-rand px-2.5 py-1.5 text-sm text-nachtblau outline-none focus:border-nachtblau disabled:opacity-60"
+            />
           </div>
         </div>
 

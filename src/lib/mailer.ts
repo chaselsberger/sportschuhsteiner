@@ -66,3 +66,41 @@ export async function sendVoucherEmail(params: {
 
   return true;
 }
+
+/** Informiert den Kunden per E-Mail, sobald seine Bestellung als versendet
+ * markiert wurde – inklusive Sendungsnummer, falls hinterlegt. Nutzt
+ * dieselben SMTP-Zugangsdaten wie sendVoucherEmail und degradiert genauso
+ * sanft, falls SMTP noch nicht konfiguriert ist. */
+export async function sendShippedEmail(params: {
+  to: string;
+  customerFirstName: string | null;
+  productTitle: string;
+  orderNumber: string;
+  trackingNumber: string | null;
+}) {
+  const transport = getTransport();
+  if (!transport) {
+    console.warn(
+      `[mailer] SMTP nicht konfiguriert – Versandbenachrichtigung für Bestellung ${params.orderNumber} wurde NICHT verschickt.`,
+    );
+    return false;
+  }
+
+  const greeting = params.customerFirstName ? `Hallo ${params.customerFirstName}` : "Hallo";
+  const trackingLine = params.trackingNumber
+    ? `\nSendungsnummer: ${params.trackingNumber}\n`
+    : "";
+
+  await transport.sendMail({
+    from: `"${brand.name}" <${brand.contact.email}>`,
+    to: params.to,
+    subject: `Ihre Bestellung ist unterwegs · ${brand.name}`,
+    text:
+      `${greeting},\n\n` +
+      `gute Nachrichten: „${params.productTitle}“ (Bestell-Nr. ${params.orderNumber}) wurde soeben versendet.\n` +
+      trackingLine +
+      `\n${brand.name}\n${brand.contact.email}\n${brand.contact.phoneDisplay}`,
+  });
+
+  return true;
+}
