@@ -50,6 +50,9 @@ export default async function AdminVerkaeufePage() {
               postalCode: o.shippingPostalCode,
               country: o.shippingCountry,
             }}
+            shipped={o.shipped}
+            shippedAt={o.shippedAt?.toISOString() ?? null}
+            trackingNumber={o.trackingNumber}
             receiptUrl={o.receiptUrl}
             invoiceUrl={o.invoiceUrl}
             invoicePdfUrl={o.invoicePdfUrl}

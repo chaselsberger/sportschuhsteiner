@@ -58,6 +58,9 @@ export function OrderRow({
   voucherMessage = null,
   voucherRedeemed = false,
   voucherRedeemedAt = null,
+  shipped = false,
+  shippedAt = null,
+  trackingNumber = null,
 }: {
   id: string;
   orderNumber: string;
@@ -82,11 +85,16 @@ export function OrderRow({
   voucherMessage?: string | null;
   voucherRedeemed?: boolean;
   voucherRedeemedAt?: string | null;
+  shipped?: boolean;
+  shippedAt?: string | null;
+  trackingNumber?: string | null;
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [trackingInput, setTrackingInput] = useState(trackingNumber ?? "");
   const isGutschein = type === "gutschein";
+  const hasShippingAddress = Boolean(shippingAddress.line1);
 
   async function handleToggleRedeemed() {
     setBusy(true);
@@ -115,6 +123,41 @@ export function OrderRow({
     alert("Gutschein wurde erneut per E-Mail verschickt.");
   }
 
+  async function handleShippedChange(nextShipped: boolean) {
+    setBusy(true);
+    setError(null);
+    const res = await fetch(`/api/admin/verkaeufe/${id}/versendet`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ shipped: nextShipped, trackingNumber: trackingInput }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      setError(data?.error ?? "Fehlgeschlagen.");
+      setBusy(false);
+      return;
+    }
+    router.refresh();
+  }
+
+  async function handleTrackingBlur() {
+    if (trackingInput === (trackingNumber ?? "")) return;
+    setBusy(true);
+    setError(null);
+    const res = await fetch(`/api/admin/verkaeufe/${id}/versendet`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ shipped, trackingNumber: trackingInput }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      setError(data?.error ?? "Fehlgeschlagen.");
+      setBusy(false);
+      return;
+    }
+    router.refresh();
+  }
+
   async function handleRefund() {
     if (!confirm(`Zahlung für „${productTitle}“ (${amountLabel}) wirklich erstatten?`)) {
       return;
@@ -139,6 +182,14 @@ export function OrderRow({
 
   const redeemedDate = voucherRedeemedAt
     ? new Date(voucherRedeemedAt).toLocaleDateString("de-AT", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+    : null;
+
+  const shippedDate = shippedAt
+    ? new Date(shippedAt).toLocaleDateString("de-AT", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
@@ -179,6 +230,15 @@ export function OrderRow({
             }`}
           >
             {voucherRedeemed ? "Eingelöst" : "Offen"}
+          </span>
+        )}
+        {hasShippingAddress && status === "bezahlt" && (
+          <span
+            className={`w-fit rounded-full px-2.5 py-1 text-[13px] font-extrabold ${
+              shipped ? "bg-[#f3f0e8] text-text-muted" : "bg-[#fff6e0] text-nachtblau"
+            }`}
+          >
+            {shipped ? "Versendet" : "Zu versenden"}
           </span>
         )}
       </summary>
@@ -230,6 +290,31 @@ export function OrderRow({
                   {l}
                 </p>
               ))}
+            </div>
+          )}
+          {hasShippingAddress && (
+            <div className="flex flex-col gap-1.5">
+              <p className="m-0 text-[13px] font-extrabold text-nachtblau">Versand</p>
+              <label className="flex items-center gap-2 text-text-muted">
+                <input
+                  type="checkbox"
+                  checked={shipped}
+                  disabled={busy}
+                  onChange={(e) => handleShippedChange(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                Versendet
+                {shippedDate && <span className="text-[12px]">(am {shippedDate})</span>}
+              </label>
+              <input
+                type="text"
+                value={trackingInput}
+                onChange={(e) => setTrackingInput(e.target.value)}
+                onBlur={handleTrackingBlur}
+                disabled={busy}
+                placeholder="Sendungsnummer (optional)"
+                className="w-full max-w-[220px] rounded-lg border border-karte-rand px-2.5 py-1.5 text-sm text-nachtblau outline-none focus:border-nachtblau disabled:opacity-60"
+              />
             </div>
           )}
           {customerPhone && (

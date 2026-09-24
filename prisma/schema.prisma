@@ -44,8 +44,14 @@ model Product {
   brand         String
   model         String
   title         String
+  /// Hauptkategorie (erste ausgewählte) – für Badge, Breadcrumb, Produktseite.
   category      ShopCategory
   categoryLabel String
+  /// Alle zugewiesenen Kategorien, kommagetrennt (z. B. "laufen,wandern").
+  /// SQLite kennt keine nativen Array-Felder, daher als String; enthält
+  /// immer mindestens `category`. Für Filter/Zuordnung siehe
+  /// lib/product-categories.ts.
+  categories    String        @default("")
   gender        Gender
   size          Float
   sizeDetails   String
@@ -138,6 +144,11 @@ model Order {
   /// Vom Personal im Geschäft gesetzt, sobald der Gutschein eingelöst wurde.
   voucherRedeemed       Boolean     @default(false)
   voucherRedeemedAt     DateTime?
+  /// Vom Personal gesetzt, sobald das Paket zur Post gebracht wurde.
+  shipped               Boolean     @default(false)
+  shippedAt             DateTime?
+  /// Optionale Tracking-/Sendungsnummer des Versanddienstleisters.
+  trackingNumber        String?
   createdAt             DateTime    @default(now())
 }
 

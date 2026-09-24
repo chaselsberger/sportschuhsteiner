@@ -133,6 +133,26 @@ export async function toggleVoucherRedeemed(orderId: string) {
   });
 }
 
+/** Markiert eine Bestellung als versendet (mit optionaler Sendungsnummer)
+ * bzw. macht das rückgängig, falls versehentlich gesetzt. */
+export async function setOrderShipped(
+  orderId: string,
+  shipped: boolean,
+  trackingNumber?: string | null,
+) {
+  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  if (!order) throw new Error("Bestellung nicht gefunden.");
+
+  return prisma.order.update({
+    where: { id: orderId },
+    data: {
+      shipped,
+      shippedAt: shipped ? new Date() : null,
+      trackingNumber: trackingNumber?.trim() || null,
+    },
+  });
+}
+
 /** Löst die Rückerstattung bei Stripe aus und markiert die Order lokal. */
 export async function refundOrder(orderId: string) {
   const order = await prisma.order.findUnique({ where: { id: orderId } });
