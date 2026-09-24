@@ -81,6 +81,16 @@ model ProductPhoto {
   dateiname String
   sortIndex Int      @default(0)
   createdAt DateTime @default(now())
+  /// Gesetzt, sobald die physische Datei automatisch gelöscht wurde (1 Monat
+  /// nach Verkauf, siehe scripts/cleanup-old-photos.mts). Der Datensatz
+  /// selbst bleibt zu Statistikzwecken erhalten.
+  deletedAt DateTime?
+}
+
+model Brand {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
 }
 
 model Order {

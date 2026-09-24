@@ -55,6 +55,11 @@ export async function PATCH(
       return NextResponse.json({ error: "Marke fehlt." }, { status: 400 });
     }
     data.brand = body.brand.trim();
+    await prisma.brand.upsert({
+      where: { name: data.brand as string },
+      update: {},
+      create: { name: data.brand as string },
+    });
   }
   if (body.model !== undefined) {
     if (typeof body.model !== "string" || !body.model.trim()) {

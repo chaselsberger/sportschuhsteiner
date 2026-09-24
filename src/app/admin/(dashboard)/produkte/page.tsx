@@ -31,7 +31,13 @@ export default async function AdminProdukteePage() {
               size={p.size}
               priceLabel={euro(p.price)}
               status={p.status}
-              imageUrl={firstPhoto ? photoUrl(firstPhoto.dateiname) : (p.legacyImage ?? null)}
+              imageUrl={
+                firstPhoto
+                  ? firstPhoto.deletedAt
+                    ? "/images/produkt-platzhalter.svg"
+                    : photoUrl(firstPhoto.dateiname)
+                  : (p.legacyImage ?? null)
+              }
             />
           );
         })}

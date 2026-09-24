@@ -3,7 +3,8 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { shopCategories, type ShopCategory } from "@/lib/product-types";
+import { resizeForWeb } from "@/lib/image-resize";
+import { MAX_PRODUCT_PHOTOS, shopCategories, type ShopCategory } from "@/lib/product-types";
 
 const PHOTOS_DIR = process.env.PRODUCT_PHOTOS_DIR;
 
@@ -94,26 +95,35 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
+  if (photos.length > MAX_PRODUCT_PHOTOS) {
+    return NextResponse.json(
+      { error: `Es sind maximal ${MAX_PRODUCT_PHOTOS} Fotos pro Produkt erlaubt.` },
+      { status: 400 },
+    );
+  }
 
   await mkdir(PHOTOS_DIR, { recursive: true });
 
   const savedFilenames: string[] = [];
   for (const photo of photos) {
-    const ext = ALLOWED_IMAGE_TYPES[photo.type];
-    if (!ext) {
+    const originalExt = ALLOWED_IMAGE_TYPES[photo.type];
+    if (!originalExt) {
       return NextResponse.json(
         { error: `Nicht unterstütztes Bildformat: ${photo.type || "unbekannt"}.` },
         { status: 400 },
       );
     }
+    const originalBuffer = Buffer.from(await photo.arrayBuffer());
+    const { buffer, ext } = await resizeForWeb(originalBuffer, originalExt);
     const filename = `${randomUUID()}${ext}`;
-    const buffer = Buffer.from(await photo.arrayBuffer());
     // PHOTOS_DIR liegt außerhalb des Projekts (siehe .env) – kein Tracing nötig.
     await writeFile(path.join(/* turbopackIgnore: true */ PHOTOS_DIR, filename), buffer);
     savedFilenames.push(filename);
   }
 
   const slug = await uniqueSlug(slugify(`${brand}-${model}-${size}`));
+
+  await prisma.brand.upsert({ where: { name: brand }, update: {}, create: { name: brand } });
 
   const product = await prisma.product.create({
     data: {

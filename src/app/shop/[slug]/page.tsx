@@ -6,10 +6,43 @@ import { brand } from "@/brand.config";
 import { Icon } from "@/components/Icon";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductActions } from "@/components/shop/ProductActions";
-import { badgeFor, discountLabel, euro } from "@/lib/product-types";
+import { badgeFor, discountLabel, euro, type Product } from "@/lib/product-types";
 import { getPublishedProductBySlug, getSimilarProducts } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
+
+const siteUrl = brand.isStaging
+  ? "https://vorschau.sport-schuh-steiner.at"
+  : "https://www.sport-schuh-steiner.at";
+
+function productJsonLd(p: Product) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${p.brand} ${p.model}`,
+    description:
+      p.description ?? `${p.brand} ${p.model} in Größe ${p.size} – Einzelstück bei ${brand.name}.`,
+    sku: p.id ?? p.slug,
+    productID: p.id ?? p.slug,
+    brand: { "@type": "Brand", name: p.brand },
+    category: p.categoryLabel,
+    image: (p.images && p.images.length > 0 ? p.images : [p.image]).map(
+      (img) => `${siteUrl}${img}`,
+    ),
+    additionalProperty: [
+      { "@type": "PropertyValue", name: "Größe (EU)", value: String(p.size) },
+      { "@type": "PropertyValue", name: "Geschlecht", value: p.gender },
+    ],
+    offers: {
+      "@type": "Offer",
+      url: `${siteUrl}/shop/${p.slug}`,
+      priceCurrency: "EUR",
+      price: p.price,
+      availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  };
+}
 
 export async function generateMetadata({
   params,
@@ -83,6 +116,10 @@ export default async function ProductPage({
 
   return (
     <div className="pb-40 lg:pb-0">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(product)) }}
+      />
       <nav
         aria-label="Brotkrumen"
         className="page-x hidden pt-[22px] text-[13px] text-text-muted lg:block"

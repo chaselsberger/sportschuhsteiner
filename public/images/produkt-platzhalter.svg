@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Foto gelöscht (Aufbewahrungsfrist)">
+  <rect width="200" height="200" rx="16" fill="#EDE7DA"/>
+  <g fill="none" stroke="#8A8377" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M55 132c0-10 6-16 14-19l26-9c5-2 8-6 8-11v-6c-6 4-13 6-20 4-11-3-18-13-16-24 2-10 12-17 23-16 14 1 25 13 25 27v34c0 8-6 15-14 17l-40 12c-8 3-16-2-18-9z"/>
+    <path d="M55 132h90"/>
+  </g>
+  <line x1="36" y1="36" x2="164" y2="164" stroke="#B3261E" stroke-width="6" stroke-linecap="round"/>
+  <text x="100" y="182" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#5B5648">Foto gelöscht (Frist)</text>
+</svg>

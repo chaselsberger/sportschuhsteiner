@@ -1,9 +1,9 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { shopCategories, type ShopCategory } from "@/lib/product-types";
+import { adminSizeOptions, MAX_PRODUCT_PHOTOS, shopCategories, type ShopCategory } from "@/lib/product-types";
 
 const genders = ["Damen", "Herren", "Kinder"] as const;
 const statusOptions = [
@@ -37,7 +37,7 @@ export function EditProductForm({
 }: {
   id: string;
   initial: Initial;
-  photos: { id: string; url: string }[];
+  photos: { id: string; url: string; deletedAt: string | null }[];
 }) {
   const fieldId = useId();
   const router = useRouter();
@@ -47,6 +47,16 @@ export function EditProductForm({
   const [saving, setSaving] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [busyPhotoId, setBusyPhotoId] = useState<string | null>(null);
+  const [brands, setBrands] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/admin/marken")
+      .then((res) => res.json())
+      .then((data) => setBrands(Array.isArray(data?.brands) ? data.brands : []))
+      .catch(() => {});
+  }, []);
+
+  const remainingPhotoSlots = MAX_PRODUCT_PHOTOS - photos.length;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -96,6 +106,13 @@ export function EditProductForm({
   async function addPhotos(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
     if (files.length === 0) return;
+    if (files.length > remainingPhotoSlots) {
+      setError(
+        `Es sind maximal ${MAX_PRODUCT_PHOTOS} Fotos pro Produkt erlaubt (noch ${Math.max(remainingPhotoSlots, 0)} frei).`,
+      );
+      e.target.value = "";
+      return;
+    }
     setUploadingPhoto(true);
     setError(null);
     const form = new FormData();
@@ -132,30 +149,50 @@ export function EditProductForm({
       className="flex flex-col gap-5 rounded-[22px] border border-karte-rand bg-white p-5"
     >
       <div className="flex flex-col gap-2.5">
-        <span className="text-[13px] font-extrabold text-nachtblau">Fotos</span>
+        <span className="text-[13px] font-extrabold text-nachtblau">
+          Fotos <span className="font-normal text-text-muted">(max. {MAX_PRODUCT_PHOTOS})</span>
+        </span>
         <div className="flex flex-wrap gap-2">
-          {photos.map((p) => (
-            <div key={p.id} className="relative h-24 w-24 overflow-hidden rounded-lg bg-bild-grund">
-              <Image src={p.url} alt="" fill sizes="96px" className="object-cover" />
-              <button
-                type="button"
-                onClick={() => removePhoto(p.id)}
-                disabled={busyPhotoId === p.id}
-                className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs font-bold text-white disabled:opacity-60"
-                aria-label="Foto löschen"
+          {photos.map((p) =>
+            p.deletedAt ? (
+              <div
+                key={p.id}
+                className="relative h-24 w-24 overflow-hidden rounded-lg bg-bild-grund"
+                title={`Original gelöscht am ${new Date(p.deletedAt).toLocaleDateString("de-AT")} (Aufbewahrungsfrist von 1 Monat nach Verkauf abgelaufen)`}
               >
-                ✕
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploadingPhoto}
-            className="flex h-24 w-24 flex-col items-center justify-center rounded-lg border-2 border-dashed border-formrand text-sm font-bold text-nachtblau disabled:opacity-60"
-          >
-            {uploadingPhoto ? "…" : "+ Foto"}
-          </button>
+                <Image
+                  src="/images/produkt-platzhalter.svg"
+                  alt="Foto gelöscht (Aufbewahrungsfrist abgelaufen)"
+                  fill
+                  sizes="96px"
+                  className="object-contain p-3"
+                />
+              </div>
+            ) : (
+              <div key={p.id} className="relative h-24 w-24 overflow-hidden rounded-lg bg-bild-grund">
+                <Image src={p.url} alt="" fill sizes="96px" className="object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removePhoto(p.id)}
+                  disabled={busyPhotoId === p.id}
+                  className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs font-bold text-white disabled:opacity-60"
+                  aria-label="Foto löschen"
+                >
+                  ✕
+                </button>
+              </div>
+            ),
+          )}
+          {remainingPhotoSlots > 0 && (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingPhoto}
+              className="flex h-24 w-24 flex-col items-center justify-center rounded-lg border-2 border-dashed border-formrand text-sm font-bold text-nachtblau disabled:opacity-60"
+            >
+              {uploadingPhoto ? "…" : "+ Foto"}
+            </button>
+          )}
         </div>
         <input
           ref={fileInputRef}
@@ -168,7 +205,26 @@ export function EditProductForm({
       </div>
 
       <div className="grid grid-cols-2 gap-3.5">
-        <Field label="Marke" name="brand" id={`${fieldId}-brand`} defaultValue={initial.brand} required />
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor={`${fieldId}-brand`} className="text-[13px] font-extrabold text-nachtblau">
+            Marke
+          </label>
+          <input
+            id={`${fieldId}-brand`}
+            name="brand"
+            type="text"
+            list={`${fieldId}-brand-list`}
+            defaultValue={initial.brand}
+            required
+            autoComplete="off"
+            className="h-[52px] rounded-xl border border-formrand bg-white px-4 text-base"
+          />
+          <datalist id={`${fieldId}-brand-list`}>
+            {brands.map((b) => (
+              <option key={b} value={b} />
+            ))}
+          </datalist>
+        </div>
         <Field label="Modell" name="model" id={`${fieldId}-model`} defaultValue={initial.model} required />
       </div>
 
@@ -214,15 +270,27 @@ export function EditProductForm({
       </div>
 
       <div className="grid grid-cols-2 gap-3.5">
-        <Field
-          label="Größe (EU)"
-          name="size"
-          id={`${fieldId}-size`}
-          type="number"
-          step="0.5"
-          defaultValue={initial.size}
-          required
-        />
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor={`${fieldId}-size`} className="text-[13px] font-extrabold text-nachtblau">
+            Größe (EU)
+          </label>
+          <select
+            id={`${fieldId}-size`}
+            name="size"
+            required
+            defaultValue={initial.size}
+            className="h-[52px] rounded-xl border border-formrand bg-white px-3 text-base"
+          >
+            {!adminSizeOptions.includes(initial.size) && (
+              <option value={initial.size}>{initial.size.toString().replace(".", ",")}</option>
+            )}
+            {adminSizeOptions.map((s) => (
+              <option key={s} value={s}>
+                {s.toString().replace(".", ",")}
+              </option>
+            ))}
+          </select>
+        </div>
         <Field
           label="Größendetails"
           name="sizeDetails"

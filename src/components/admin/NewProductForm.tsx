@@ -1,8 +1,8 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { shopCategories } from "@/lib/product-types";
+import { adminSizeOptions, MAX_PRODUCT_PHOTOS, shopCategories } from "@/lib/product-types";
 
 const genders = ["Damen", "Herren", "Kinder"] as const;
 
@@ -14,9 +14,24 @@ export function NewProductForm() {
   const [previews, setPreviews] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<"veroeffentlicht" | "entwurf" | null>(null);
+  const [brands, setBrands] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/admin/marken")
+      .then((res) => res.json())
+      .then((data) => setBrands(Array.isArray(data?.brands) ? data.brands : []))
+      .catch(() => {});
+  }, []);
 
   function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
+    if (files.length > MAX_PRODUCT_PHOTOS) {
+      setError(`Es sind maximal ${MAX_PRODUCT_PHOTOS} Fotos pro Produkt erlaubt.`);
+      e.target.value = "";
+      setPreviews([]);
+      return;
+    }
+    setError(null);
     setPreviews(files.map((f) => URL.createObjectURL(f)));
   }
 
@@ -56,7 +71,9 @@ export function NewProductForm() {
       className="flex flex-col gap-5 rounded-[22px] border border-karte-rand bg-white p-5"
     >
       <div className="flex flex-col gap-2.5">
-        <span className="text-[13px] font-extrabold text-nachtblau">Foto(s)</span>
+        <span className="text-[13px] font-extrabold text-nachtblau">
+          Foto(s) <span className="font-normal text-text-muted">(max. {MAX_PRODUCT_PHOTOS})</span>
+        </span>
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
@@ -92,7 +109,25 @@ export function NewProductForm() {
       </div>
 
       <div className="grid grid-cols-2 gap-3.5">
-        <Field label="Marke" name="brand" id={`${id}-brand`} required />
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor={`${id}-brand`} className="text-[13px] font-extrabold text-nachtblau">
+            Marke
+          </label>
+          <input
+            id={`${id}-brand`}
+            name="brand"
+            type="text"
+            list={`${id}-brand-list`}
+            required
+            autoComplete="off"
+            className="h-[52px] rounded-xl border border-formrand bg-white px-4 text-base"
+          />
+          <datalist id={`${id}-brand-list`}>
+            {brands.map((b) => (
+              <option key={b} value={b} />
+            ))}
+          </datalist>
+        </div>
         <Field label="Modell" name="model" id={`${id}-model`} required />
       </div>
 
@@ -134,7 +169,27 @@ export function NewProductForm() {
       </div>
 
       <div className="grid grid-cols-2 gap-3.5">
-        <Field label="Größe (EU)" name="size" id={`${id}-size`} type="number" step="0.5" required />
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor={`${id}-size`} className="text-[13px] font-extrabold text-nachtblau">
+            Größe (EU)
+          </label>
+          <select
+            id={`${id}-size`}
+            name="size"
+            required
+            defaultValue=""
+            className="h-[52px] rounded-xl border border-formrand bg-white px-3 text-base"
+          >
+            <option value="" disabled>
+              Bitte wählen …
+            </option>
+            {adminSizeOptions.map((s) => (
+              <option key={s} value={s}>
+                {s.toString().replace(".", ",")}
+              </option>
+            ))}
+          </select>
+        </div>
         <Field
           label="Größendetails"
           name="sizeDetails"

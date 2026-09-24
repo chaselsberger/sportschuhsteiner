@@ -23,8 +23,10 @@ export function photoUrl(dateiname: string) {
 type DbProductWithPhotos = DbProduct & { photos: ProductPhoto[] };
 
 function toProduct(p: DbProductWithPhotos): Product {
-  const firstPhoto = [...p.photos].sort((a, b) => a.sortIndex - b.sortIndex)[0];
+  const sortedPhotos = [...p.photos].sort((a, b) => a.sortIndex - b.sortIndex);
+  const firstPhoto = sortedPhotos[0];
   return {
+    id: p.id,
     slug: p.slug,
     brand: p.brand,
     model: p.model,
@@ -40,6 +42,7 @@ function toProduct(p: DbProductWithPhotos): Product {
     image: firstPhoto
       ? photoUrl(firstPhoto.dateiname)
       : (p.legacyImage ?? "/images/kategorie-laufen.jpg"),
+    images: sortedPhotos.filter((ph) => !ph.deletedAt).map((ph) => photoUrl(ph.dateiname)),
     fit: p.imageFit === "contain" ? "contain" : undefined,
     position: p.imagePosition ?? undefined,
     isNew: p.isNew,

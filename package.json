@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "node scripts/seed.mts",
+    "cleanup:photos": "node scripts/cleanup-old-photos.mts",
     "postinstall": "node scripts/install-fonts.mjs"
   },
   "dependencies": {

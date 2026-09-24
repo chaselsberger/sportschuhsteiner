@@ -22,7 +22,11 @@ export default async function EditProductPage({
 
   const photos = [...product.photos]
     .sort((a, b) => a.sortIndex - b.sortIndex)
-    .map((p) => ({ id: p.id, url: photoUrl(p.dateiname) }));
+    .map((p) => ({
+      id: p.id,
+      url: photoUrl(p.dateiname),
+      deletedAt: p.deletedAt ? p.deletedAt.toISOString() : null,
+    }));
 
   return (
     <div className="flex flex-col gap-5">
