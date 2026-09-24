@@ -1,7 +1,14 @@
 AuthType Basic
 AuthName "Sport Schuh Steiner - Vorschau"
 AuthUserFile /var/www/vhosts/sport-schuh-steiner.at/.htpasswd-vorschau
-Require valid-user
+
+# Stripe kann bei Webhook-Aufrufen keinen Basic-Auth-Login mitschicken –
+# dieser Pfad prüft sich stattdessen selbst über die Stripe-Signatur ab
+# (siehe src/app/api/webhooks/stripe/route.ts), daher hier ausgenommen.
+<RequireAny>
+  Require valid-user
+  Require expr "%{REQUEST_URI} =~ m#^/api/webhooks/#"
+</RequireAny>
 
 <IfModule mod_headers.c>
   Header set X-Robots-Tag "noindex, nofollow"
