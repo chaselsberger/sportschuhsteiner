@@ -138,6 +138,17 @@ export default function BeratungServicePage() {
               </a>
             </li>
           ))}
+          <li className="shrink-0">
+            <a
+              href="#physio"
+              className="flex h-11 items-center gap-2 rounded-full border border-linie px-4 text-sm font-bold text-nachtblau hover:border-nachtblau"
+            >
+              <span className="text-linkblau">
+                <Icon name="heart" size={20} />
+              </span>
+              Physio- &amp; Podotherapie
+            </a>
+          </li>
         </ul>
       </nav>
 
@@ -191,14 +202,80 @@ export default function BeratungServicePage() {
           </section>
         ))}
 
-        <section className="flex flex-col gap-3 rounded-3xl bg-stein-2 p-6 lg:p-10">
-          <h2 className="t-h3 text-nachtblau">Physio- &amp; Podotherapie</h2>
-          <p className="m-0 max-w-[760px] text-base leading-relaxed text-text-muted">
-            Wir arbeiten mit Physio- und Podotherapeutinnen zusammen: Helene in
-            Going und Silvia in Wörgl. Die Abwicklung läuft über Ihr
-            Physiotherapie-Team; bei entsprechender Zusatzversicherung können
-            die Kosten über die Krankenkasse verrechnet werden.
-          </p>
+        <section
+          id="physio"
+          className="flex scroll-mt-6 flex-col gap-6 rounded-3xl bg-stein-2 p-6 lg:p-10"
+        >
+          <div className="flex flex-col gap-3">
+            <span className="text-linkblau">
+              <Icon name="heart" size={40} />
+            </span>
+            <h2 className="t-h3 text-nachtblau">Physio- &amp; Podotherapie</h2>
+            <p className="m-0 max-w-[760px] text-base leading-relaxed text-text-muted">
+              Unsere Mission ist es, Ihre Gesundheit und Ihr Wohlbefinden zu
+              fördern, indem wir hochwertige Schuhe und maßgefertigte Einlagen
+              bieten, die perfekt zu Ihren Bedürfnissen passen. Wir arbeiten
+              mit Physiotherapeutinnen Hand in Hand zusammen, damit Ihre
+              Schuhe nicht nur modisch sind, sondern auch Ihre Anforderungen
+              an eine gesunde Bewegung erfüllen – auf Empfehlung von Georg und
+              Martina.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-2 rounded-2xl border border-karte-rand bg-white p-6">
+              <b className="text-nachtblau">Physio- und Podotherapie in Going</b>
+              <p className="m-0 text-[15px] leading-relaxed text-text-muted">
+                Kontakt aufnehmen mit Physiotherapeutin und Podotherapeutin
+                Helene.
+              </p>
+              <a
+                href="https://www.physiotherapie-helenemonitzer.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-flex h-11 w-fit items-center gap-2 rounded-full border-2 border-nachtblau px-5 text-sm font-extrabold text-nachtblau hover:bg-stein-2"
+              >
+                Kontakt
+                <Icon name="arrow" size={18} />
+              </a>
+            </div>
+            <div className="flex flex-col gap-2 rounded-2xl border border-karte-rand bg-white p-6">
+              <b className="text-nachtblau">Physiotherapie in Wörgl</b>
+              <p className="m-0 text-[15px] leading-relaxed text-text-muted">
+                Kontakt aufnehmen mit Physiotherapeutin Silvia.
+              </p>
+              <a
+                href="https://www.aguatsgfühl.at/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-flex h-11 w-fit items-center gap-2 rounded-full border-2 border-nachtblau px-5 text-sm font-extrabold text-nachtblau hover:bg-stein-2"
+              >
+                Kontakt
+                <Icon name="arrow" size={18} />
+              </a>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <b className="text-nachtblau">Unsere Leistungen im Überblick</b>
+            <ul className="m-0 flex list-none flex-col gap-3 p-0">
+              {[
+                "Professionelle Schuhberatung und -anpassung.",
+                "Maßgeschneiderte Einlagen, individuell auf Ihre Fußstruktur abgestimmt.",
+                "Abwicklung über Ihr Physiotherapie-Team – bei entsprechender Zusatzversicherung können die Kosten über die Krankenkasse verrechnet werden.",
+                "Breite Auswahl an qualitativ hochwertigen Schuhen in unserem Sortiment.",
+              ].map((item) => (
+                <li key={item} className="flex gap-3">
+                  <span className="mt-0.5 shrink-0 text-linkblau">
+                    <Icon name="check" size={20} />
+                  </span>
+                  <span className="text-[15px] leading-relaxed text-text-muted">
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
       </div>
 
