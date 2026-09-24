@@ -65,6 +65,9 @@ export async function POST(request: Request) {
   const badge = str(form, "badge") || null;
   const isRestposten = str(form, "isRestposten") === "true";
   const publish = str(form, "status") !== "entwurf";
+  const description = str(form, "description") || null;
+  const detailsMaterial = str(form, "detailsMaterial") || null;
+  const fitTip = str(form, "fitTip") || null;
 
   const categoryMeta = shopCategories.find((c) => c.key === category);
 
@@ -128,6 +131,9 @@ export async function POST(request: Request) {
       badge,
       isRestposten,
       status: publish ? "veroeffentlicht" : "entwurf",
+      description,
+      detailsMaterial,
+      fitTip,
       photos: {
         create: savedFilenames.map((dateiname, i) => ({ dateiname, sortIndex: i })),
       },

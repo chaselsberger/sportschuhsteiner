@@ -43,6 +43,9 @@ function toProduct(p: DbProductWithPhotos): Product {
     fit: p.imageFit === "contain" ? "contain" : undefined,
     position: p.imagePosition ?? undefined,
     isNew: p.isNew,
+    description: p.description ?? undefined,
+    detailsMaterial: p.detailsMaterial ?? undefined,
+    fitTip: p.fitTip ?? undefined,
   };
 }
 

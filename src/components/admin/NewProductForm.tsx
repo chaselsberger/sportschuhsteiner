@@ -162,6 +162,25 @@ export function NewProductForm() {
         placeholder="Restposten"
       />
 
+      <TextArea
+        label="Beschreibung"
+        name="description"
+        id={`${id}-description`}
+        placeholder="Freitext für das Beschreibung-Feld auf der Produktseite (optional)"
+      />
+      <TextArea
+        label="Details & Material"
+        name="detailsMaterial"
+        id={`${id}-detailsMaterial`}
+        placeholder="Material, Sprengung, Gewicht … (optional)"
+      />
+      <TextArea
+        label="Passform-Tipp aus dem Geschäft"
+        name="fitTip"
+        id={`${id}-fitTip`}
+        placeholder="z. B. „fällt eher schmal aus …“ (optional)"
+      />
+
       {error && <p className="m-0 text-[13px] text-[#b3261e]">{error}</p>}
 
       <div className="flex flex-col gap-2.5 sm:flex-row">
@@ -216,6 +235,33 @@ function Field({
         required={required}
         placeholder={placeholder}
         className="h-[52px] rounded-xl border border-formrand bg-white px-4 text-base"
+      />
+    </div>
+  );
+}
+
+function TextArea({
+  label,
+  name,
+  id,
+  placeholder,
+}: {
+  label: string;
+  name: string;
+  id: string;
+  placeholder?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="text-[13px] font-extrabold text-nachtblau">
+        {label}
+      </label>
+      <textarea
+        id={id}
+        name={name}
+        rows={4}
+        placeholder={placeholder}
+        className="rounded-xl border border-formrand bg-white px-4 py-3 text-base"
       />
     </div>
   );

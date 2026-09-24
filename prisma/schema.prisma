@@ -50,6 +50,12 @@ model Product {
   isRestposten  Boolean       @default(false)
   isNew         Boolean       @default(false)
   status        ProductStatus @default(entwurf)
+  /// Freitext für das "Beschreibung"-Accordion auf der Produktseite.
+  description     String?
+  /// Freitext für "Details & Material".
+  detailsMaterial String?
+  /// Freitext für "Passform-Tipp aus dem Geschäft".
+  fitTip          String?
   /// Statisches Bild aus public/images (Altbestand vor der Admin-PWA). Neue
   /// Produkte nutzen stattdessen `photos`.
   legacyImage   String?
@@ -86,6 +92,25 @@ model Order {
   currency              String      @default("eur")
   customerEmail         String?
   customerName          String?
+  customerPhone         String?
+  /// Rechnungsadresse (Stripe customer_details.address).
+  billingAddressLine1   String?
+  billingAddressLine2   String?
+  billingCity           String?
+  billingPostalCode     String?
+  billingCountry        String?
+  /// Lieferadresse, falls abweichend erfasst (Stripe collected_information.shipping_details).
+  shippingName          String?
+  shippingAddressLine1  String?
+  shippingAddressLine2  String?
+  shippingCity          String?
+  shippingPostalCode    String?
+  shippingCountry       String?
+  /// Von Stripe gehosteter Beleg (Kassenbon) zur Zahlung.
+  receiptUrl            String?
+  /// Von Stripe gehostete Rechnung, falls Rechnungsstellung aktiviert ist.
+  invoiceUrl            String?
+  invoicePdfUrl         String?
   status                OrderStatus @default(bezahlt)
   createdAt             DateTime    @default(now())
 }

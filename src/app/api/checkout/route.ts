@@ -58,6 +58,7 @@ export async function POST(request: Request) {
     shipping_address_collection: {
       allowed_countries: ["AT", "DE"],
     },
+    phone_number_collection: { enabled: true },
     metadata: {
       productId: product.id,
       slug: product.slug,

@@ -46,24 +46,8 @@ const perks = [
   },
 ] as const;
 
-const accordion = [
-  {
-    title: "Beschreibung",
-    text: "[Produktbeschreibung – wird im Shop-Backend gepflegt oder per KI aus Hersteller-Daten vorformuliert und vom Team freigegeben.]",
-  },
-  {
-    title: "Details & Material",
-    text: "[Material, Sprengung, Gewicht – aus den Herstellerangaben]",
-  },
-  {
-    title: "Passform-Tipp aus dem Geschäft",
-    text: "[Kurzer Tipp aus dem Team, z. B. „fällt eher schmal aus – bei breitem Vorfuß eine halbe Nummer größer“]",
-  },
-  {
-    title: "Versand & Rückgabe",
-    text: "Abholung in Scheffau kostenlos, Versand mit der Post nach Österreich und Deutschland. Da es sich um ein Restposten-Einzelstück handelt, ist die Rückgabe ausgeschlossen – bitte vor dem Kauf gut prüfen oder im Geschäft anprobieren.",
-  },
-];
+const shippingReturnText =
+  "Abholung in Scheffau kostenlos, Versand mit der Post nach Österreich und Deutschland. Da es sich um ein Restposten-Einzelstück handelt, ist die Rückgabe ausgeschlossen – bitte vor dem Kauf gut prüfen oder im Geschäft anprobieren.";
 
 export default async function ProductPage({
   params,
@@ -73,6 +57,29 @@ export default async function ProductPage({
   if (!product) notFound();
 
   const similar = await getSimilarProducts(product);
+
+  const accordion = [
+    {
+      title: "Beschreibung",
+      text:
+        product.description ??
+        "[Produktbeschreibung – wird im Shop-Backend gepflegt oder per KI aus Hersteller-Daten vorformuliert und vom Team freigegeben.]",
+    },
+    {
+      title: "Details & Material",
+      text: product.detailsMaterial ?? "[Material, Sprengung, Gewicht – aus den Herstellerangaben]",
+    },
+    {
+      title: "Passform-Tipp aus dem Geschäft",
+      text:
+        product.fitTip ??
+        "[Kurzer Tipp aus dem Team, z. B. „fällt eher schmal aus – bei breitem Vorfuß eine halbe Nummer größer“]",
+    },
+    {
+      title: "Versand & Rückgabe",
+      text: shippingReturnText,
+    },
+  ];
 
   return (
     <div className="pb-40 lg:pb-0">

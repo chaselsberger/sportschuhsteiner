@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -71,6 +72,9 @@ export function ProductRow({
           </option>
         ))}
       </select>
+      <Link href={`/admin/produkte/${id}`} className="text-sm font-bold text-nachtblau">
+        Bearbeiten
+      </Link>
       <button
         type="button"
         onClick={remove}

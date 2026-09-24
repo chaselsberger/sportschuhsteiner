@@ -23,6 +23,9 @@ export type Product = {
   fit?: "contain";
   position?: string;
   isNew?: boolean;
+  description?: string;
+  detailsMaterial?: string;
+  fitTip?: string;
 };
 
 export const shopCategories: {

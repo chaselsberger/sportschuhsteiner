@@ -10,6 +10,16 @@ function fallbackOrderNumber(session: Stripe.Checkout.Session) {
   return session.id;
 }
 
+/** Holt den von Stripe gehosteten Kassenbon-Link über die zugehörige Charge. */
+async function fetchReceiptUrl(paymentIntentId: string): Promise<string | null> {
+  const paymentIntent = await stripe.paymentIntents
+    .retrieve(paymentIntentId, { expand: ["latest_charge"] })
+    .catch(() => null);
+  const charge = paymentIntent?.latest_charge;
+  if (!charge || typeof charge === "string") return null;
+  return charge.receipt_url ?? null;
+}
+
 /**
  * Legt aus einer abgeschlossenen Stripe-Checkout-Session eine Order an
  * (idempotent über `stripeSessionId @unique` — der Webhook kann dasselbe
@@ -40,6 +50,21 @@ export async function createOrderFromSession(session: Stripe.Checkout.Session) {
       ? session.payment_intent
       : (session.payment_intent?.id ?? null);
 
+  const receiptUrl = paymentIntentId ? await fetchReceiptUrl(paymentIntentId) : null;
+
+  const invoiceId =
+    typeof session.invoice === "string" ? session.invoice : (session.invoice?.id ?? null);
+  let invoiceUrl: string | null = null;
+  let invoicePdfUrl: string | null = null;
+  if (invoiceId) {
+    const invoice = await stripe.invoices.retrieve(invoiceId).catch(() => null);
+    invoiceUrl = invoice?.hosted_invoice_url ?? null;
+    invoicePdfUrl = invoice?.invoice_pdf ?? null;
+  }
+
+  const billingAddress = session.customer_details?.address;
+  const shipping = session.collected_information?.shipping_details;
+
   const order = await prisma.order.create({
     data: {
       orderNumber,
@@ -51,6 +76,21 @@ export async function createOrderFromSession(session: Stripe.Checkout.Session) {
       currency: session.currency ?? "eur",
       customerEmail: session.customer_details?.email ?? null,
       customerName: session.customer_details?.name ?? null,
+      customerPhone: session.customer_details?.phone ?? null,
+      billingAddressLine1: billingAddress?.line1 ?? null,
+      billingAddressLine2: billingAddress?.line2 ?? null,
+      billingCity: billingAddress?.city ?? null,
+      billingPostalCode: billingAddress?.postal_code ?? null,
+      billingCountry: billingAddress?.country ?? null,
+      shippingName: shipping?.name ?? null,
+      shippingAddressLine1: shipping?.address?.line1 ?? null,
+      shippingAddressLine2: shipping?.address?.line2 ?? null,
+      shippingCity: shipping?.address?.city ?? null,
+      shippingPostalCode: shipping?.address?.postal_code ?? null,
+      shippingCountry: shipping?.address?.country ?? null,
+      receiptUrl,
+      invoiceUrl,
+      invoicePdfUrl,
     },
   });
 

@@ -25,8 +25,27 @@ export default async function AdminVerkaeufePage() {
             productTitle={o.productTitle}
             amountLabel={euro(o.amountTotal / 100)}
             customerEmail={o.customerEmail}
+            customerName={o.customerName}
+            customerPhone={o.customerPhone}
             status={o.status}
             createdAt={o.createdAt.toISOString()}
+            billingAddress={{
+              line1: o.billingAddressLine1,
+              line2: o.billingAddressLine2,
+              city: o.billingCity,
+              postalCode: o.billingPostalCode,
+              country: o.billingCountry,
+            }}
+            shippingName={o.shippingName}
+            shippingAddress={{
+              line1: o.shippingAddressLine1,
+              line2: o.shippingAddressLine2,
+              city: o.shippingCity,
+              postalCode: o.shippingPostalCode,
+              country: o.shippingCountry,
+            }}
+            receiptUrl={o.receiptUrl}
+            invoiceUrl={o.invoiceUrl}
           />
         ))}
         {orders.length === 0 && (
