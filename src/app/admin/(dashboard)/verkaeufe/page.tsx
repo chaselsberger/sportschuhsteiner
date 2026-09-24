@@ -34,6 +34,7 @@ export default async function AdminVerkaeufePage() {
             voucherRecipientName={o.voucherRecipientName}
             voucherMessage={o.voucherMessage}
             voucherRedeemed={o.voucherRedeemed}
+            voucherRedeemedAt={o.voucherRedeemedAt?.toISOString() ?? null}
             billingAddress={{
               line1: o.billingAddressLine1,
               line2: o.billingAddressLine2,
@@ -51,6 +52,9 @@ export default async function AdminVerkaeufePage() {
             }}
             receiptUrl={o.receiptUrl}
             invoiceUrl={o.invoiceUrl}
+            invoicePdfUrl={o.invoicePdfUrl}
+            stripeSessionId={o.stripeSessionId}
+            stripePaymentIntentId={o.stripePaymentIntentId}
           />
         ))}
         {orders.length === 0 && (

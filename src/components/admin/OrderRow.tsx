@@ -49,11 +49,15 @@ export function OrderRow({
   shippingAddress,
   receiptUrl,
   invoiceUrl,
+  invoicePdfUrl = null,
+  stripeSessionId = null,
+  stripePaymentIntentId = null,
   type = "produkt",
   voucherCode = null,
   voucherRecipientName = null,
   voucherMessage = null,
   voucherRedeemed = false,
+  voucherRedeemedAt = null,
 }: {
   id: string;
   orderNumber: string;
@@ -69,11 +73,15 @@ export function OrderRow({
   shippingAddress: Address;
   receiptUrl: string | null;
   invoiceUrl: string | null;
+  invoicePdfUrl?: string | null;
+  stripeSessionId?: string | null;
+  stripePaymentIntentId?: string | null;
   type?: string;
   voucherCode?: string | null;
   voucherRecipientName?: string | null;
   voucherMessage?: string | null;
   voucherRedeemed?: boolean;
+  voucherRedeemedAt?: string | null;
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -128,6 +136,14 @@ export function OrderRow({
     month: "2-digit",
     year: "numeric",
   });
+
+  const redeemedDate = voucherRedeemedAt
+    ? new Date(voucherRedeemedAt).toLocaleDateString("de-AT", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+    : null;
 
   const billingLines = formatAddress(billingAddress, customerName);
   const shippingLines = formatAddress(shippingAddress, shippingName);
@@ -186,6 +202,12 @@ export function OrderRow({
                   <span className="font-bold text-nachtblau">Nachricht: </span>„{voucherMessage}“
                 </p>
               )}
+              {redeemedDate && (
+                <p className="m-0 text-text-muted">
+                  <span className="font-bold text-nachtblau">Eingelöst am: </span>
+                  {redeemedDate}
+                </p>
+              )}
             </div>
           )}
           <div>
@@ -216,6 +238,21 @@ export function OrderRow({
               {customerPhone}
             </p>
           )}
+          <div>
+            <p className="m-0 text-[13px] font-extrabold text-nachtblau">Referenz</p>
+            <p className="m-0 text-text-muted">
+              <span className="font-bold text-nachtblau">Bestellnummer: </span>
+              {orderNumber}
+            </p>
+            {stripeSessionId && (
+              <p className="m-0 break-all font-mono text-[12px] text-text-muted">{stripeSessionId}</p>
+            )}
+            {stripePaymentIntentId && (
+              <p className="m-0 break-all font-mono text-[12px] text-text-muted">
+                {stripePaymentIntentId}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-col items-start gap-2 sm:items-end">
@@ -237,6 +274,16 @@ export function OrderRow({
               className="text-sm font-bold text-nachtblau underline"
             >
               Rechnung (Stripe)
+            </a>
+          )}
+          {invoicePdfUrl && (
+            <a
+              href={invoicePdfUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm font-bold text-nachtblau underline"
+            >
+              Rechnung als PDF
             </a>
           )}
           {isGutschein && voucherCode && (
