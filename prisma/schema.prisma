@@ -33,6 +33,11 @@ enum OrderStatus {
   erstattet
 }
 
+enum OrderType {
+  produkt
+  gutschein
+}
+
 model Product {
   id            String        @id @default(cuid())
   slug          String        @unique
@@ -112,6 +117,17 @@ model Order {
   invoiceUrl            String?
   invoicePdfUrl         String?
   status                OrderStatus @default(bezahlt)
+  type                  OrderType   @default(produkt)
+  /// Nur für type=gutschein: Gutscheincode, z. B. "SSS-4F7K-2Q9X" (dient auch
+  /// als Bearer-Token für den PDF-Download-Link, siehe /api/gutscheine/[code]/pdf).
+  voucherCode           String?     @unique
+  /// Vorname der beschenkten Person (Personalisierung auf dem Gutschein), optional.
+  voucherRecipientName  String?
+  /// Persönliche Nachricht auf dem Gutschein, optional.
+  voucherMessage        String?
+  /// Vom Personal im Geschäft gesetzt, sobald der Gutschein eingelöst wurde.
+  voucherRedeemed       Boolean     @default(false)
+  voucherRedeemedAt     DateTime?
   createdAt             DateTime    @default(now())
 }
 

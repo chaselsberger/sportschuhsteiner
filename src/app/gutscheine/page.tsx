@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { brand } from "@/brand.config";
 import { Icon } from "@/components/Icon";
 import { MountainMark } from "@/components/MountainMark";
@@ -78,7 +79,7 @@ export default function GutscheinePage() {
           <div className="flex flex-col gap-4 rounded-3xl border border-karte-rand bg-white p-7">
             <h2 className="t-h3 text-nachtblau">Wertgutschein</h2>
             <p className="m-0 text-[15px] text-text-muted">
-              Frei einlösbar im Geschäft – und bald auch im Online-Shop.
+              Frei einlösbar im Geschäft – jetzt bequem online kaufen.
             </p>
             <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
               {valueAmounts.map((v) => (
@@ -90,6 +91,13 @@ export default function GutscheinePage() {
                 </li>
               ))}
             </ul>
+            <Link
+              href="/gutscheine/kaufen"
+              className="flex h-14 w-fit items-center gap-2.5 rounded-full bg-logogelb px-7 font-extrabold text-nachtblau hover:brightness-95"
+            >
+              <Icon name="cart" size={20} />
+              Jetzt online kaufen
+            </Link>
           </div>
           <div className="flex flex-col gap-4 rounded-3xl border border-karte-rand bg-white p-7">
             <h2 className="t-h3 text-nachtblau">Leistungsgutschein</h2>
@@ -154,19 +162,29 @@ export default function GutscheinePage() {
 
         <div className="mt-8 flex flex-col gap-4 rounded-3xl bg-nachtblau p-7 text-white lg:flex-row lg:items-center lg:justify-between lg:p-10">
           <div className="flex flex-col gap-2">
-            <p className="t-h3 m-0 text-white">Gutschein anfragen</p>
+            <p className="t-h3 m-0 text-white">Wertgutschein sofort online</p>
             <p className="m-0 max-w-[620px] text-base leading-relaxed text-hellblau">
-              Der Online-Kauf startet zusammen mit dem Shop. Bis dahin stellen
-              wir Ihren Gutschein gerne persönlich aus.
+              Betrag wählen, sicher mit Stripe bezahlen, Gutschein direkt als
+              PDF erhalten. Für Leistungsgutscheine bestätigen wir jede
+              Bestellung persönlich.
             </p>
           </div>
-          <a
-            href={mailto}
-            className="flex h-14 shrink-0 items-center gap-2.5 self-start rounded-full bg-logogelb px-7 font-extrabold text-nachtblau hover:brightness-95 lg:self-auto"
-          >
-            <Icon name="mail" size={20} />
-            Per E-Mail anfragen
-          </a>
+          <div className="flex shrink-0 flex-col gap-3 self-start sm:flex-row lg:self-auto">
+            <a
+              href="/gutscheine/kaufen"
+              className="flex h-14 items-center gap-2.5 rounded-full bg-logogelb px-7 font-extrabold text-nachtblau hover:brightness-95"
+            >
+              <Icon name="cart" size={20} />
+              Wertgutschein kaufen
+            </a>
+            <a
+              href={mailto}
+              className="flex h-14 items-center gap-2.5 rounded-full border-2 border-white px-7 font-extrabold text-white hover:bg-white/10"
+            >
+              <Icon name="mail" size={20} />
+              Leistungsgutschein anfragen
+            </a>
+          </div>
         </div>
       </section>
     </>

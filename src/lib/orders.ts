@@ -114,6 +114,25 @@ export async function listOrders() {
   return prisma.order.findMany({ orderBy: { createdAt: "desc" } });
 }
 
+export async function getOrderByStripeSessionId(sessionId: string) {
+  return prisma.order.findUnique({ where: { stripeSessionId: sessionId } });
+}
+
+/** Kippt den Eingelöst-Status eines Gutscheins (z. B. bei Einlösung im Geschäft). */
+export async function toggleVoucherRedeemed(orderId: string) {
+  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  if (!order) throw new Error("Bestellung nicht gefunden.");
+  if (order.type !== "gutschein") throw new Error("Kein Gutschein.");
+
+  return prisma.order.update({
+    where: { id: orderId },
+    data: {
+      voucherRedeemed: !order.voucherRedeemed,
+      voucherRedeemedAt: !order.voucherRedeemed ? new Date() : null,
+    },
+  });
+}
+
 /** Löst die Rückerstattung bei Stripe aus und markiert die Order lokal. */
 export async function refundOrder(orderId: string) {
   const order = await prisma.order.findUnique({ where: { id: orderId } });

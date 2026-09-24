@@ -9,6 +9,7 @@ const staticRoutes = [
   "sortiment",
   "shop",
   "gutscheine",
+  "gutscheine/kaufen",
   "ueber-uns",
   "kontakt",
   "impressum",

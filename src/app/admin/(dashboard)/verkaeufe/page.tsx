@@ -29,6 +29,11 @@ export default async function AdminVerkaeufePage() {
             customerPhone={o.customerPhone}
             status={o.status}
             createdAt={o.createdAt.toISOString()}
+            type={o.type}
+            voucherCode={o.voucherCode}
+            voucherRecipientName={o.voucherRecipientName}
+            voucherMessage={o.voucherMessage}
+            voucherRedeemed={o.voucherRedeemed}
             billingAddress={{
               line1: o.billingAddressLine1,
               line2: o.billingAddressLine2,

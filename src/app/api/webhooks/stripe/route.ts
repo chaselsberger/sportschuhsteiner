@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { brand } from "@/brand.config";
+import { createGiftVoucherOrderFromSession, renderVoucherPdf } from "@/lib/gift-vouchers";
+import { sendVoucherEmail } from "@/lib/mailer";
 import { createOrderFromSession, markOrderRefundedByPaymentIntent } from "@/lib/orders";
 import { stripe } from "@/lib/stripe";
 
@@ -43,7 +45,27 @@ export async function POST(request: Request) {
     case "checkout.session.completed": {
       const session = event.data.object;
       if (session.payment_status === "paid") {
-        await createOrderFromSession(session);
+        if (session.metadata?.type === "gutschein") {
+          const order = await createGiftVoucherOrderFromSession(session);
+          if (order.customerEmail && order.voucherCode) {
+            const pdf = await renderVoucherPdf({
+              amount: order.amountTotal / 100,
+              code: order.voucherCode,
+              recipientFirstName: order.voucherRecipientName,
+              message: order.voucherMessage,
+              issuedAt: order.createdAt,
+            });
+            await sendVoucherEmail({
+              to: order.customerEmail,
+              recipientFirstName: order.voucherRecipientName,
+              amountLabel: `€ ${(order.amountTotal / 100).toLocaleString("de-AT")}`,
+              voucherCode: order.voucherCode,
+              pdf,
+            }).catch((err) => console.error("[webhook] Gutschein-Mail fehlgeschlagen", err));
+          }
+        } else {
+          await createOrderFromSession(session);
+        }
       }
       break;
     }
