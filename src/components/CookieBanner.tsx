@@ -26,12 +26,6 @@ const categoryInfo: {
     description:
       "Lädt eingebettete Inhalte wie die Google-Karte erst nach Ihrer Zustimmung.",
   },
-  {
-    key: "statistics",
-    title: "Statistik",
-    description:
-      "Cookielose, anonyme Reichweitenmessung — hilft uns, die Seite zu verbessern.",
-  },
 ];
 
 export function CookieBanner() {
@@ -87,8 +81,8 @@ export function CookieBanner() {
       >
         <h2 className="t-h4 text-nachtblau">Cookie-Einstellungen</h2>
         <p className="mt-2 text-sm text-text-muted">
-          Wir verwenden nur, was nötig ist. Zustimmung brauchen wir lediglich
-          für externe Inhalte wie die Google-Karte.
+          Ihre Auswahl speichern wir auf diesem Gerät. Für die Google-Karte
+          benötigen wir Ihre Zustimmung.
         </p>
 
         {customizing && (

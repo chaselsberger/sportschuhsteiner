@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 
-export type ConsentCategory = "necessary" | "external" | "statistics";
+export type ConsentCategory = "necessary" | "external";
 
 export type Consent = Record<ConsentCategory, boolean>;
 
@@ -24,7 +24,6 @@ type StoredConsent = {
 const defaultConsent: Consent = {
   necessary: true,
   external: false,
-  statistics: false,
 };
 
 function readStored(): StoredConsent | null {
@@ -94,11 +93,11 @@ export function CookieConsentProvider({
   }, []);
 
   const acceptAll = useCallback(
-    () => save({ necessary: true, external: true, statistics: true }),
+    () => save({ necessary: true, external: true }),
     [save],
   );
   const rejectAll = useCallback(
-    () => save({ necessary: true, external: false, statistics: false }),
+    () => save({ necessary: true, external: false }),
     [save],
   );
 

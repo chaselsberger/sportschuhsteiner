@@ -38,19 +38,6 @@ function Stars({ rating, size }: { rating: number; size: number }) {
 }
 
 function Avatar({ review }: { review: GoogleReview }) {
-  if (review.authorPhotoUrl) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={review.authorPhotoUrl}
-        alt=""
-        width={44}
-        height={44}
-        referrerPolicy="no-referrer"
-        className="h-11 w-11 shrink-0 rounded-full"
-      />
-    );
-  }
   return (
     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-stein-2 font-extrabold text-nachtblau">
       {review.authorName.charAt(0)}
