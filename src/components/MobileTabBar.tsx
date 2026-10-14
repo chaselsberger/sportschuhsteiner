@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { brand } from "@/brand.config";
 import { useAppointment } from "@/lib/appointment";
 import { Icon, type IconName } from "./Icon";
 import { MobileMenuSheet } from "./MobileMenuSheet";
@@ -10,7 +11,9 @@ import { MobileMenuSheet } from "./MobileMenuSheet";
 const tabs: { href: string; label: string; icon: IconName }[] = [
   { href: "/", label: "Start", icon: "home" },
   { href: "/sortiment", label: "Sortiment", icon: "search" },
-  { href: "/shop", label: "Shop", icon: "bag" },
+  ...(brand.shopEnabled
+    ? [{ href: "/shop", label: "Shop", icon: "bag" as const }]
+    : []),
 ];
 
 const itemClass =

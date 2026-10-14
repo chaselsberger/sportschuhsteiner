@@ -72,6 +72,7 @@ export default function ImpressumPage() {
                 <li>© Georg Steiner</li>
                 <li>© Manuel Bialucha</li>
                 <li>© Tobias Knaubert</li>
+                <li>© Mathäus Gartner / TVB Wilder Kaiser</li>
               </ul>
             </section>
 

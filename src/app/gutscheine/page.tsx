@@ -91,13 +91,23 @@ export default function GutscheinePage() {
                 </li>
               ))}
             </ul>
-            <Link
-              href="/gutscheine/kaufen"
-              className="flex h-14 w-fit items-center gap-2.5 rounded-full bg-logogelb px-7 font-extrabold text-nachtblau hover:brightness-95"
-            >
-              <Icon name="cart" size={20} />
-              Jetzt online kaufen
-            </Link>
+            {brand.shopEnabled ? (
+              <Link
+                href="/gutscheine/kaufen"
+                className="flex h-14 w-fit items-center gap-2.5 rounded-full bg-logogelb px-7 font-extrabold text-nachtblau hover:brightness-95"
+              >
+                <Icon name="cart" size={20} />
+                Jetzt online kaufen
+              </Link>
+            ) : (
+              <a
+                href={mailto}
+                className="flex h-14 w-fit items-center gap-2.5 rounded-full bg-logogelb px-7 font-extrabold text-nachtblau hover:brightness-95"
+              >
+                <Icon name="mail" size={20} />
+                Gutschein anfragen
+              </a>
+            )}
           </div>
           <div className="flex flex-col gap-4 rounded-3xl border border-karte-rand bg-white p-7">
             <h2 className="t-h3 text-nachtblau">Leistungsgutschein</h2>
@@ -162,27 +172,31 @@ export default function GutscheinePage() {
 
         <div className="mt-8 flex flex-col gap-4 rounded-3xl bg-nachtblau p-7 text-white lg:flex-row lg:items-center lg:justify-between lg:p-10">
           <div className="flex flex-col gap-2">
-            <p className="t-h3 m-0 text-white">Wertgutschein sofort online</p>
+            <p className="t-h3 m-0 text-white">
+              {brand.shopEnabled ? "Wertgutschein sofort online" : "Gutschein anfragen"}
+            </p>
             <p className="m-0 max-w-[620px] text-base leading-relaxed text-hellblau">
-              Betrag wählen, sicher mit Stripe bezahlen, Gutschein direkt als
-              PDF erhalten. Für Leistungsgutscheine bestätigen wir jede
-              Bestellung persönlich.
+              {brand.shopEnabled
+                ? "Betrag wählen, sicher mit Stripe bezahlen, Gutschein direkt als PDF erhalten. Für Leistungsgutscheine bestätigen wir jede Bestellung persönlich."
+                : "Der Online-Kauf ist derzeit nicht verfügbar. Schreiben Sie uns Betrag und Wunschtermin – wir bestätigen jede Bestellung persönlich."}
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-3 self-start sm:flex-row lg:self-auto">
-            <a
-              href="/gutscheine/kaufen"
-              className="flex h-14 items-center gap-2.5 rounded-full bg-logogelb px-7 font-extrabold text-nachtblau hover:brightness-95"
-            >
-              <Icon name="cart" size={20} />
-              Wertgutschein kaufen
-            </a>
+            {brand.shopEnabled && (
+              <a
+                href="/gutscheine/kaufen"
+                className="flex h-14 items-center gap-2.5 rounded-full bg-logogelb px-7 font-extrabold text-nachtblau hover:brightness-95"
+              >
+                <Icon name="cart" size={20} />
+                Wertgutschein kaufen
+              </a>
+            )}
             <a
               href={mailto}
               className="flex h-14 items-center gap-2.5 rounded-full border-2 border-white px-7 font-extrabold text-white hover:bg-white/10"
             >
               <Icon name="mail" size={20} />
-              Leistungsgutschein anfragen
+              {brand.shopEnabled ? "Leistungsgutschein anfragen" : "Gutschein anfragen"}
             </a>
           </div>
         </div>

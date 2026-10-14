@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { brand } from "@/brand.config";
 import { PageHero } from "@/components/PageHero";
 import { VoucherPurchaseForm } from "@/components/shop/VoucherPurchaseForm";
 
@@ -9,6 +11,8 @@ export const metadata: Metadata = {
 };
 
 export default function GutscheinKaufenPage() {
+  if (!brand.shopEnabled) redirect("/gutscheine");
+
   return (
     <>
       <PageHero

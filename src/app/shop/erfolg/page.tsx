@@ -15,6 +15,8 @@ export const metadata: Metadata = {
 export default async function CheckoutErfolgPage({
   searchParams,
 }: PageProps<"/shop/erfolg">) {
+  if (!brand.shopEnabled) redirect("/shop");
+
   const { session_id: sessionId } = await searchParams;
 
   if (typeof sessionId !== "string" || !sessionId) {

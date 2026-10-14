@@ -18,7 +18,7 @@ export default function SortimentPage() {
       <PageHero
         crumbs={[{ href: "/", label: "Start" }, { label: "Sortiment" }]}
         title="Wohin soll Ihr Schuh Sie tragen?"
-        lead="Vom Trailrun am Hintersteiner See bis zur Skitour auf die Hohe Salve – jedes Paar wird bei uns angepasst, nicht nur verkauft."
+        lead="Vom Trailrun am Hintersteiner See bis zur Skitour auf die Hohe Salve – für jede Gelegenheit der passende Schuh."
       />
 
       <section className="page-x py-10 lg:py-16">

@@ -22,6 +22,10 @@ function generateOrderNumber(): string {
  * kann – ohne Client-Input für Preis oder Gutscheincode zu übernehmen.
  */
 export async function POST(request: Request) {
+  if (!brand.shopEnabled) {
+    return NextResponse.json({ error: "Gutschein-Kauf derzeit nicht verfügbar." }, { status: 503 });
+  }
+
   const body = await request.json().catch(() => null);
   const amount = Number(body?.amount);
   const recipientFirstName =

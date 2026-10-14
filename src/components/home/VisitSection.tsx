@@ -2,7 +2,6 @@ import Image from "next/image";
 import { brand } from "@/brand.config";
 import { shopClock } from "@/lib/opening-hours";
 import { Icon } from "../Icon";
-import { MapIllustration } from "../MapIllustration";
 import { OpeningHoursTable } from "../OpeningHoursTable";
 
 const tel = `tel:${brand.contact.phone.replace(/\s+/g, "")}`;
@@ -41,7 +40,14 @@ export function VisitSection() {
         className="hidden grid-cols-2 gap-8 px-16 py-24 lg:grid"
       >
         <div className="relative min-h-[460px] overflow-hidden rounded-3xl bg-[#E3EEF1]">
-          <MapIllustration />
+          <Image
+            src="/images/anfahrt-karte.webp"
+            alt="Illustrierte Anfahrtskarte: Sport Schuh Steiner in Scheffau am Wilden Kaiser, Blaiken 72"
+            fill
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="object-cover"
+            priority
+          />
           <div className="absolute left-7 top-7 flex flex-col gap-1 rounded-2xl bg-white px-[22px] py-[18px]">
             <span className="text-[17px] font-extrabold text-nachtblau">
               {brand.name}

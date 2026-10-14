@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { brand } from "@/brand.config";
 
 const links = [
   { href: "/beratung-service", label: "Beratung & Service" },
@@ -13,13 +14,16 @@ const links = [
 
 export function MainNav() {
   const pathname = usePathname();
+  const visibleLinks = brand.shopEnabled
+    ? links
+    : links.filter((l) => l.href !== "/shop");
 
   return (
     <nav
       aria-label="Hauptmenü"
       className="flex gap-6 text-base font-bold xl:gap-10"
     >
-      {links.map((link) => {
+      {visibleLinks.map((link) => {
         const active =
           pathname === link.href || pathname.startsWith(`${link.href}/`);
         return (

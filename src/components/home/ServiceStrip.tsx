@@ -26,10 +26,17 @@ export function QuickActions() {
         <Icon name="pin" size={24} />
         Route
       </a>
-      <Link href="/shop" className={tile}>
-        <Icon name="bag" size={24} />
-        Shop
-      </Link>
+      {brand.shopEnabled ? (
+        <Link href="/shop" className={tile}>
+          <Icon name="bag" size={24} />
+          Shop
+        </Link>
+      ) : (
+        <Link href="/sortiment" className={tile}>
+          <Icon name="search" size={24} />
+          Sortiment
+        </Link>
+      )}
     </section>
   );
 }

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Icon } from "../Icon";
 import { MountainMark } from "../MountainMark";
 import { HeroRidge, HeroRidgeMobile } from "../RidgeLine";
+import { getHeroImage } from "@/lib/hero-image";
 
 /**
  * Einstieg. Desktop: Text links auf Nachtblau, Foto rechts, Grat-Linie mit
@@ -10,6 +11,7 @@ import { HeroRidge, HeroRidgeMobile } from "../RidgeLine";
  * Grat, Text darunter.
  */
 export function HomeHero() {
+  const heroImage = getHeroImage();
   return (
     <section className="relative flex flex-col bg-nachtblau text-white lg:min-h-[780px] lg:flex-row">
       <div className="relative z-[2] flex flex-col gap-4 px-4 pb-[34px] pt-3 sm:px-8 lg:w-[54%] lg:shrink-0 lg:gap-[26px] lg:pb-[190px] lg:pl-16 lg:pr-10 lg:pt-[72px] xl:w-[640px] xl:pr-4">
@@ -27,8 +29,7 @@ export function HomeHero() {
         </p>
         <p className="m-0 hidden max-w-[500px] text-[19px] leading-relaxed text-[#D6E6EC] lg:block">
           Fußanalyse auf der Druckmessplatte, Einlagen nach Maß und Beratung,
-          die sich Zeit nimmt. Dafür fahren unsere Kundinnen und Kunden viele
-          Kilometer bis nach Scheffau.
+          die sich Zeit nimmt. Qualitätsprodukte für jeden Fuß.
         </p>
         <div className="flex flex-col gap-3.5 lg:mt-1.5 lg:flex-row lg:flex-wrap">
           <a
@@ -50,8 +51,9 @@ export function HomeHero() {
 
       <div className="relative order-first h-[300px] overflow-hidden sm:h-[420px] lg:order-none lg:h-auto lg:flex-1">
         <Image
-          src="/images/hero-schneeschuh-wilder-kaiser.jpg"
-          alt="Schneeschuhwanderung vor dem Wilden Kaiser"
+          key={heroImage.src}
+          src={heroImage.src}
+          alt={heroImage.alt}
           fill
           preload
           sizes="(min-width: 1024px) 46vw, 100vw"

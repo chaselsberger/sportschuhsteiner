@@ -116,7 +116,7 @@ export default function BeratungServicePage() {
           { label: "Beratung & Service" },
         ]}
         title="Beratung & Service"
-        lead="Der Verkauf kommt bei uns an zweiter Stelle. Zuerst steht die Analyse – damit Sie am Ende einen Schuh tragen, der wirklich passt."
+        lead="Zuerst steht die Analyse – damit Sie am Ende einen Schuh tragen, der wirklich passt."
       />
 
       {/* Sprungmarken */}

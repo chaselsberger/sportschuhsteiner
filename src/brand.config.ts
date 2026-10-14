@@ -9,6 +9,17 @@ const siteUrl = isStaging
   ? "https://vorschau.sport-schuh-steiner.at"
   : "https://www.sport-schuh-steiner.at";
 
+/**
+ * Schalter für den Online-Verkauf (Produkt-Shop + Gutschein-Kauf per Stripe).
+ * Die Inhaber haben sich entschieden, vorerst nicht live zu gehen – der Shop
+ * ist deaktiviert, bis dieser Wert auf "true" gesetzt wird.
+ *
+ * Reaktivierung: in `.env` (bzw. Plesk-Umgebungsvariablen)
+ *   NEXT_PUBLIC_SHOP_ENABLED=true
+ * setzen, dann `npm run build` + Neustart. Siehe SHOP-REAKTIVIERUNG.md.
+ */
+const shopEnabled = process.env.NEXT_PUBLIC_SHOP_ENABLED === "true";
+
 export const brand = {
   siteUrl,
   name: "Sport Schuh Steiner",
@@ -71,6 +82,7 @@ export const brand = {
         : process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) ?? "",
   },
   isStaging,
+  shopEnabled,
 } as const;
 
 /**

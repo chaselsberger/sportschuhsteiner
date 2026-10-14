@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { brand } from "@/brand.config";
 import { BottomSheet } from "./BottomSheet";
 
 const links = [
@@ -19,10 +20,14 @@ export function MobileMenuSheet({
   open: boolean;
   onClose: () => void;
 }) {
+  const visibleLinks = brand.shopEnabled
+    ? links
+    : links.filter((l) => l.href !== "/shop");
+
   return (
     <BottomSheet open={open} onClose={onClose} title="Menü">
       <ul className="space-y-1">
-        {links.map((link) => (
+        {visibleLinks.map((link) => (
           <li key={link.href}>
             <Link
               href={link.href}

@@ -137,7 +137,7 @@ export async function GoogleReviews() {
         <div className="flex w-[340px] shrink-0 flex-col gap-3.5">
           <p className="t-eyebrow m-0 text-linkblau">Google-Bewertungen</p>
           <h2 className="t-h2 text-nachtblau">
-            Was Kundinnen und Kunden sagen
+            Was unsere Kunden sagen
           </h2>
           {summary("text-[56px]", 20)}
           <a

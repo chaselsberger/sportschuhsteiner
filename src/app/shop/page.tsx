@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { brand } from "@/brand.config";
 import { PageHero } from "@/components/PageHero";
 import { ShopBrowser } from "@/components/shop/ShopBrowser";
+import { ShopDisabledNotice } from "@/components/ShopDisabledNotice";
 import { SizeTable } from "@/components/shop/SizeTable";
 import { getPublishedProducts } from "@/lib/products";
 
@@ -13,6 +15,18 @@ export const metadata: Metadata = {
 };
 
 export default async function ShopPage() {
+  if (!brand.shopEnabled) {
+    return (
+      <>
+        <PageHero
+          crumbs={[{ href: "/", label: "Start" }, { label: "Shop" }]}
+          title="Einzelstücke & Restposten"
+        />
+        <ShopDisabledNotice />
+      </>
+    );
+  }
+
   const products = await getPublishedProducts();
   return (
     <>

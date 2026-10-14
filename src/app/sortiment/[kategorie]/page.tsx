@@ -49,7 +49,9 @@ export default async function KategoriePage({
   const cat = categories.find((c) => c.slug === kategorie);
   if (!cat) notFound();
 
-  const products = await getPublishedProductsByCategory(cat.shop, 4);
+  const products = brand.shopEnabled
+    ? await getPublishedProductsByCategory(cat.shop, 4)
+    : [];
 
   return (
     <>

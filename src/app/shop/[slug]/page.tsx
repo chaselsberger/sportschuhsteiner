@@ -85,6 +85,8 @@ const shippingReturnText =
 export default async function ProductPage({
   params,
 }: PageProps<"/shop/[slug]">) {
+  if (!brand.shopEnabled) notFound();
+
   const { slug } = await params;
   const product = await getPublishedProductBySlug(slug);
   if (!product) notFound();

@@ -14,6 +14,8 @@ export const metadata: Metadata = {
 export default async function GutscheinErfolgPage({
   searchParams,
 }: PageProps<"/gutscheine/erfolg">) {
+  if (!brand.shopEnabled) redirect("/gutscheine");
+
   const { session_id: sessionId } = await searchParams;
 
   if (typeof sessionId !== "string" || !sessionId) {

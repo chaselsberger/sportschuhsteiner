@@ -91,8 +91,18 @@ export function Footer() {
               className="block h-20 w-[198px]"
             />
             <p className="m-0 text-[15px] leading-relaxed">
-              Fragen zu Größe oder Verfügbarkeit? Schreiben Sie uns – wir
-              antworten schnell.
+              Ihr Sportfachgeschäft für Laufen, Wandern, Ski & Alltag in
+              Scheffau am Wilden Kaiser.
+            </p>
+            <p className="m-0 text-[15px] leading-relaxed">
+              Fragen zu Größe oder Verfügbarkeit?{" "}
+              <a
+                href={`mailto:${brand.contact.email}`}
+                className="underline hover:text-logogelb"
+              >
+                Schreiben Sie uns
+              </a>{" "}
+              – wir antworten schnell.
             </p>
           </div>
           <div className="grid flex-1 grid-cols-4 gap-8 text-[15px]">

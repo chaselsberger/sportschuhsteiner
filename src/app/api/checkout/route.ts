@@ -20,6 +20,10 @@ function generateOrderNumber(): string {
  * nie vom Client übernehmen, sonst könnte der Preis manipuliert werden.
  */
 export async function POST(request: Request) {
+  if (!brand.shopEnabled) {
+    return NextResponse.json({ error: "Shop derzeit nicht verfügbar." }, { status: 503 });
+  }
+
   const body = await request.json().catch(() => null);
   const slug = typeof body?.slug === "string" ? body.slug : null;
 

@@ -7,6 +7,8 @@ import { ProductCard, ProductCardMobile } from "../ProductCard";
 
 /** Shop-Vorschau: die 4 neuesten Einzelstücke */
 export async function LatestPairs() {
+  if (!brand.shopEnabled) return null;
+
   const products = await getLatestProducts();
   if (products.length === 0) return null;
   const badge = badgeFor;

@@ -29,6 +29,13 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Online-Shop derzeit deaktiviert
+
+Die Inhaber gehen vorerst nicht mit dem Online-Verkauf live. Shop und
+Online-Gutschein-Kauf sind über einen zentralen Schalter abgeschaltet,
+lassen sich aber mit wenigen Schritten wieder freischalten – siehe
+[SHOP-REAKTIVIERUNG.md](SHOP-REAKTIVIERUNG.md).
+
 ## Geplante Aufgabe: alte Produktfotos aufräumen
 
 `npm run cleanup:photos` löscht die physischen Originalfotos verkaufter
