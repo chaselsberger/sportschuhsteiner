@@ -7,26 +7,38 @@
  * gleichmäßig vergrößert – so bleibt der Grat unverzerrt und der Schuh rund.
  */
 
+import { laufIcon } from "./shoeIcons";
+
 const DESKTOP_RIDGE =
-  "M0 118 L90 102 L160 108 L240 80 L300 90 L370 56 L420 68 L470 36 L510 50 L560 20 L600 44 L650 32 L700 62 L770 48 L840 84 L900 70 L960 94 L1040 64 L1100 78 L1170 46 L1220 58 L1280 88 L1360 82 L1440 108";
+  "M0 118 L60 104 L110 110 L170 84 L205 92 L260 52 L290 66 L318 58 L360 96 L400 88 L450 60 L478 70 L520 30 L545 48 L565 40 L610 92 L660 84 L720 62 L752 74 L800 22 L825 44 L850 36 L880 70 L905 62 L960 100 L1010 90 L1060 54 L1090 66 L1130 40 L1160 62 L1200 84 L1240 76 L1290 98 L1340 90 L1390 108 L1440 112";
+
+/** Schattenseiten und Felsrinnen der Gipfel (Desktop), zackig wie im Vorbild */
+const DESKTOP_FACETS =
+  "M260 52 L290 66 L318 58 L360 96 L330 80 L312 84 L300 72 L282 80 L270 66 Z " +
+  "M520 30 L545 48 L565 40 L610 92 L580 76 L562 82 L552 62 L536 70 L530 52 Z " +
+  "M800 22 L825 44 L850 36 L880 70 L848 58 L832 70 L820 56 L806 62 L808 42 Z " +
+  "M1130 40 L1160 62 L1200 84 L1172 74 L1158 80 L1146 64 L1136 66 Z " +
+  "M450 60 L478 70 L500 98 L476 84 L462 82 Z " +
+  "M1060 54 L1090 66 L1110 98 L1086 84 L1072 82 Z " +
+  "M170 84 L205 92 L214 108 L190 100 Z " +
+  "M720 62 L752 74 L770 100 L744 88 L730 86 Z";
 
 const MOBILE_RIDGE =
-  "M0 52 L30 44 L58 48 L84 30 L108 38 L132 18 L152 26 L176 10 L200 24 L228 16 L252 34 L282 26 L310 42 L340 30 L366 40 L390 34";
+  "M0 54 L28 46 L50 50 L82 22 L98 34 L112 28 L136 48 L160 40 L196 8 L214 24 L226 18 L252 44 L278 36 L312 16 L330 30 L346 26 L368 44 L390 40";
 
-/** Laufschuh-Icon (48er-Raster) auf 26 px, Auflagepunkt 50 % / 92 % */
+const MOBILE_FACETS =
+  "M82 22 L98 34 L112 28 L136 48 L116 42 L104 46 L96 38 L88 42 Z " +
+  "M196 8 L214 24 L226 18 L252 44 L228 34 L216 40 L208 28 L200 30 Z " +
+  "M312 16 L330 30 L346 26 L368 44 L344 38 L334 42 L326 32 L318 34 Z";
+
+/**
+ * Laufschuh des Kunden (icon-lauf.svg der alten Seite, 199,9 × 113,7) auf
+ * 38 px Breite, Mitte auf dem Grat, Sohle auf der Linie.
+ */
 function Hiker() {
   return (
-    <g
-      transform="translate(-13 -24) scale(0.5417)"
-      fill="none"
-      stroke="#13303B"
-      strokeWidth={2.2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 33V19.5c0-1 .9-1.6 1.8-1.2l2.4 1c3 1.3 6.4.8 8.9-1.3l3.7-3.2c.9-.8 2.3-.6 3 .4l4.8 6.6 8.3 2.4c4.2 1.2 7.1 3.8 7.1 6.7V33z" />
-      <path d="M4 38h40" />
-      <path d="M19 22l2.6-2.2M23 25l2.6-2.2" />
+    <g transform="translate(-19 -22) scale(0.19)" fill="#FFFFFF" stroke="none">
+      {laufIcon.node}
     </g>
   );
 }
@@ -44,6 +56,12 @@ export function HeroRidge() {
         className="absolute inset-0 h-full w-full overflow-visible"
       >
         <path d={`${DESKTOP_RIDGE} L1440 142 L0 142 Z`} fill="#F4F1EA" />
+        <path
+          className="mtn-fill"
+          d={DESKTOP_FACETS}
+          fill="#13303B"
+          fillOpacity={0.16}
+        />
         <path
           className="ridge"
           d={DESKTOP_RIDGE}
@@ -85,6 +103,12 @@ export function HeroRidgeMobile() {
         className="absolute inset-0 h-full w-full"
       >
         <path d={`${MOBILE_RIDGE} L390 61 L0 61 Z`} fill="#13303B" />
+        <path
+          className="mtn-fill"
+          d={MOBILE_FACETS}
+          fill="#FFFFFF"
+          fillOpacity={0.1}
+        />
         <path
           className="ridge"
           d={MOBILE_RIDGE}

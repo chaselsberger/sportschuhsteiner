@@ -1,8 +1,18 @@
 /**
  * Linien-Icons aus dem Claude-Design-Entwurf (48er-Raster, Strich 2,2).
- * Die Schuh-Icons sind Entwurfs-Icons und werden 1:1 durch die Original-Icons
- * der alten Seite ersetzt, sobald diese vorliegen.
+ * Die Schuh-Icons (Laufen, Trail, Wandern, Ski, Skitour, Beruf, Barfuß) sind
+ * die Original-Icons der alten Seite (shoeIcons.tsx, Füllflächen). Schneeschuh
+ * und Einlage bleiben Entwurfs-Icons, dafür gibt es kein Original.
  */
+import {
+  bergIcon,
+  freizeitIcon,
+  laufIcon,
+  skiIcon,
+  skitourIcon,
+  type ShoeIcon,
+} from "./shoeIcons";
+
 export type IconName =
   // Sortiment
   | "run"
@@ -48,21 +58,16 @@ export type IconName =
   | "minus"
   | "loading";
 
-const runShoe = (
-  <>
-    <path d="M4 33V19.5c0-1 .9-1.6 1.8-1.2l2.4 1c3 1.3 6.4.8 8.9-1.3l3.7-3.2c.9-.8 2.3-.6 3 .4l4.8 6.6 8.3 2.4c4.2 1.2 7.1 3.8 7.1 6.7V33z" />
-    <path d="M4 38h40" />
-    <path d="M19 22l2.6-2.2M23 25l2.6-2.2" />
-  </>
-);
-
-const skiBoot = (
-  <>
-    <path d="M12 5h14l2 10 8 5c2.3 1.4 3 3 3 5v9H9l2-14z" />
-    <path d="M5 40h38" />
-    <path d="M13 13h13M12 20h16M11 27h25" />
-  </>
-);
+/** Original-Icons der alten Seite, gefüllt statt gestrichelt */
+const originals: Partial<Record<IconName, ShoeIcon>> = {
+  run: laufIcon,
+  trail: laufIcon,
+  hike: bergIcon,
+  work: bergIcon,
+  barefoot: freizeitIcon,
+  ski: skiIcon,
+  skitour: skitourIcon,
+};
 
 const footprint = (
   <>
@@ -88,18 +93,11 @@ const store = (
 );
 
 const paths: Record<IconName, React.ReactNode> = {
-  run: runShoe,
-  trail: runShoe,
-  hike: (
-    <>
-      <path d="M8 6h11v13l10 4.5c6 2.4 11 3.4 13 6.4V36H6z" />
-      <path d="M6 40h38" />
-      <path d="M19 12h-5M19 16h-5" />
-      <path d="M11 36v4M19 36v4M27 36v4M35 36v4" />
-    </>
-  ),
-  ski: skiBoot,
-  skitour: skiBoot,
+  run: null,
+  trail: null,
+  hike: null,
+  ski: null,
+  skitour: null,
   snowshoe: (
     <>
       <ellipse cx="24" cy="24" rx="10" ry="19" />
@@ -107,15 +105,8 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M19 21h10v7H19z" />
     </>
   ),
-  work: (
-    <>
-      <path d="M9 7h10v13l9 3c7 2 14 3 14 9v4H7z" />
-      <path d="M31 24c-2 4-2 8 0 12" />
-      <path d="M5 40h40" />
-      <path d="M19 12h-5" />
-    </>
-  ),
-  barefoot: footprint,
+  work: null,
+  barefoot: null,
   insole: footprint,
   footscan: (
     <>
@@ -251,6 +242,23 @@ export function Icon({
   strokeWidth?: number;
   label?: string;
 }) {
+  const original = originals[name];
+  if (original) {
+    return (
+      <svg
+        viewBox={original.viewBox}
+        width={size}
+        height={size}
+        fill="currentColor"
+        className={className ?? (size ? "shrink-0" : "h-6 w-6 shrink-0")}
+        role={label ? "img" : undefined}
+        aria-hidden={label ? undefined : true}
+        aria-label={label}
+      >
+        {original.node}
+      </svg>
+    );
+  }
   return (
     <svg
       viewBox="0 0 48 48"
