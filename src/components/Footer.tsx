@@ -113,15 +113,19 @@ export function Footer() {
                 className="flex flex-col gap-3"
               >
                 <p className="m-0 font-extrabold text-white">{col.title}</p>
-                {col.links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-hellblau hover:text-logogelb"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {col.links
+                  .filter(
+                    (link) => brand.shopEnabled || link.href !== "/gutscheine",
+                  )
+                  .map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="text-hellblau hover:text-logogelb"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
               </nav>
             ))}
           </div>

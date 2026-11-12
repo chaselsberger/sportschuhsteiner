@@ -22,7 +22,7 @@ export function MobileMenuSheet({
 }) {
   const visibleLinks = brand.shopEnabled
     ? links
-    : links.filter((l) => l.href !== "/shop");
+    : links.filter((l) => l.href !== "/shop" && l.href !== "/gutscheine");
 
   return (
     <BottomSheet open={open} onClose={onClose} title="Menü">
