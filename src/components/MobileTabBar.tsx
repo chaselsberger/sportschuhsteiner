@@ -32,7 +32,7 @@ export function MobileTabBar() {
     <>
       <nav
         aria-label="Schnellnavigation"
-        className="fixed inset-x-3 z-40 flex h-16 items-center rounded-[20px] bg-nachtblau px-1.5 shadow-[0_12px_30px_rgba(14,36,45,0.35)] lg:hidden"
+        className="fixed inset-x-3 z-40 flex h-16 items-center rounded-[20px] bg-nachtblau px-1.5 shadow-[0_2px_10px_rgba(14,36,45,0.18)] lg:hidden"
         style={{ bottom: "calc(12px + env(safe-area-inset-bottom))" }}
       >
         {tabs.map((tab) => {
