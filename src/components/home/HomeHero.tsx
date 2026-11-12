@@ -19,9 +19,11 @@ export function HomeHero() {
         <p className="t-eyebrow m-0 hidden text-eisblau lg:block">
           Sportschuh-Fachgeschäft · Bootfitting seit 2006
         </p>
+        <p className="m-0 w-fit rounded-full bg-logogelb px-5 py-1.5 text-sm font-extrabold uppercase tracking-[0.14em] text-nachtblau">
+          Gut zu Fuß.
+        </p>
         <h1 className="t-h1 text-white">
-          Der perfekte Schuh beginnt beim{" "}
-          <span className="text-logogelb">Fuß.</span>
+          Auf dem richtigen <span className="mark-gelb">Fuß</span> erwischt.
         </h1>
         <p className="m-0 text-base leading-relaxed text-[#D6E6EC] lg:hidden">
           Fußanalyse, Einlagen nach Maß und Beratung, die sich Zeit nimmt – in

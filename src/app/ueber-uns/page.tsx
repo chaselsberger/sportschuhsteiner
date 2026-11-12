@@ -36,7 +36,7 @@ export default function UeberUnsPage() {
         title={
           <>
             Mit Hand und Fuß –{" "}
-            <span className="text-logogelb">und Freude.</span>
+            <span className="mark-gelb">und Freude.</span>
           </>
         }
       />
