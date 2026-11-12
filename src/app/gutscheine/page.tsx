@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { brand } from "@/brand.config";
 import { Icon } from "@/components/Icon";
 import { MountainMark } from "@/components/MountainMark";
@@ -63,6 +64,7 @@ function VoucherVisual() {
 }
 
 export default function GutscheinePage() {
+  if (!brand.shopEnabled) notFound();
   return (
     <>
       <PageHero
@@ -173,7 +175,9 @@ export default function GutscheinePage() {
         <div className="mt-8 flex flex-col gap-4 rounded-3xl bg-nachtblau p-7 text-white lg:flex-row lg:items-center lg:justify-between lg:p-10">
           <div className="flex flex-col gap-2">
             <p className="t-h3 m-0 text-white">
-              {brand.shopEnabled ? "Wertgutschein sofort online" : "Gutschein anfragen"}
+              {brand.shopEnabled
+                ? "Wertgutschein sofort online"
+                : "Gutschein anfragen"}
             </p>
             <p className="m-0 max-w-[620px] text-base leading-relaxed text-hellblau">
               {brand.shopEnabled
@@ -196,7 +200,9 @@ export default function GutscheinePage() {
               className="flex h-14 items-center gap-2.5 rounded-full border-2 border-white px-7 font-extrabold text-white hover:bg-white/10"
             >
               <Icon name="mail" size={20} />
-              {brand.shopEnabled ? "Leistungsgutschein anfragen" : "Gutschein anfragen"}
+              {brand.shopEnabled
+                ? "Leistungsgutschein anfragen"
+                : "Gutschein anfragen"}
             </a>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { categories } from "@/brand.config";
+import { brand, categories } from "@/brand.config";
 
 export const dynamic = "force-static";
 
@@ -8,8 +8,6 @@ const staticRoutes = [
   "beratung-service",
   "sortiment",
   "shop",
-  "gutscheine",
-  "gutscheine/kaufen",
   "ueber-uns",
   "kontakt",
   "impressum",
@@ -29,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const routes = [
     ...staticRoutes,
+    ...(brand.shopEnabled ? ["gutscheine", "gutscheine/kaufen"] : []),
     ...categories.map((c) => `sortiment/${c.slug}`),
   ];
 

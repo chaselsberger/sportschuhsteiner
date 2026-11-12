@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { brand } from "@/brand.config";
 import { Icon } from "@/components/Icon";
 import { PageHero } from "@/components/PageHero";
@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 export default async function GutscheinErfolgPage({
   searchParams,
 }: PageProps<"/gutscheine/erfolg">) {
+  if (!brand.shopEnabled) notFound();
   if (!brand.shopEnabled) redirect("/gutscheine");
 
   const { session_id: sessionId } = await searchParams;
@@ -22,9 +23,15 @@ export default async function GutscheinErfolgPage({
     redirect("/gutscheine");
   }
 
-  const session = await stripe.checkout.sessions.retrieve(sessionId).catch(() => null);
+  const session = await stripe.checkout.sessions
+    .retrieve(sessionId)
+    .catch(() => null);
 
-  if (!session || session.payment_status !== "paid" || session.metadata?.type !== "gutschein") {
+  if (
+    !session ||
+    session.payment_status !== "paid" ||
+    session.metadata?.type !== "gutschein"
+  ) {
     redirect("/gutscheine");
   }
 
@@ -36,7 +43,10 @@ export default async function GutscheinErfolgPage({
   return (
     <div className="pb-16">
       <PageHero
-        crumbs={[{ href: "/gutscheine", label: "Gutscheine" }, { label: "Bestellung bestätigt" }]}
+        crumbs={[
+          { href: "/gutscheine", label: "Gutscheine" },
+          { label: "Bestellung bestätigt" },
+        ]}
         title="Danke für Ihren Einkauf!"
         lead="Ihr Gutschein ist fertig – laden Sie ihn hier herunter oder prüfen Sie Ihr Postfach."
       />
@@ -53,7 +63,8 @@ export default async function GutscheinErfolgPage({
               </span>
               {session.customer_details?.email && (
                 <span className="text-sm text-text-muted">
-                  Bestätigung & Gutschein gesendet an {session.customer_details.email}
+                  Bestätigung & Gutschein gesendet an{" "}
+                  {session.customer_details.email}
                 </span>
               )}
             </div>
@@ -61,15 +72,19 @@ export default async function GutscheinErfolgPage({
 
           <div className="flex items-center justify-between gap-3 border-t border-[#EFEAE0] pt-4">
             <span className="text-[15px] text-text">Wertgutschein</span>
-            <span className="text-[15px] font-extrabold text-nachtblau">€ {amount}</span>
+            <span className="text-[15px] font-extrabold text-nachtblau">
+              € {amount}
+            </span>
           </div>
 
           <p className="m-0 text-sm text-text-muted">
-            Bestellnummer: <span className="break-all font-mono">{orderNumber}</span>
+            Bestellnummer:{" "}
+            <span className="break-all font-mono">{orderNumber}</span>
             {voucherCode && (
               <>
                 <br />
-                Gutschein-Nr.: <span className="break-all font-mono">{voucherCode}</span>
+                Gutschein-Nr.:{" "}
+                <span className="break-all font-mono">{voucherCode}</span>
               </>
             )}
           </p>
